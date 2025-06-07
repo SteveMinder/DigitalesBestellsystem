@@ -1,81 +1,109 @@
 # src/gui/main_window.py
 # ------------------------------------------------------------
-# GUI-Startfenster: Anzeige der Speise- und Getränkekarte
-# mit Gruppierung nach Kategorie (z.B. Hauptgerichte, Getränke)
+# Überarbeitetes GUI gemäß Mockup: Navigation + Produktanzeige
 # ------------------------------------------------------------
-
+from src.gui import styles
 import tkinter as tk
 import sqlite3
-
-# ✅ DB_PATH importieren
 from src.db import DB_PATH
 
 
-def lade_produkte():
-    """Lade alle Produkte aus der Datenbank, inklusive Status."""
+# -----------------------------
+# Kategorie-Navigation und Anzeige
+# -----------------------------
+def lade_produkte_nach_kategorie(kategorieID):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT p.name, p.beschreibung, p.preis, k.bezeichnung, p.verfuegbar
-        FROM produkt p
-        JOIN kategorie k ON p.kategorieID = k.kategorieID
-        ORDER BY k.kategorieID, p.name
-    """)
+        SELECT name, beschreibung, preis FROM produkt
+        WHERE verfuegbar = 1 AND kategorieID = ?
+        ORDER BY name
+    """, (kategorieID,))
     daten = cursor.fetchall()
     conn.close()
     return daten
 
 
+def zeige_kategorie(kategorieID, inhalt_frame, titel_label):
+    # Inhalt löschen
+    for widget in inhalt_frame.winfo_children():
+        widget.destroy()
+
+    # Titel setzen
+    kategorie_namen = {
+        1: "Hauptgerichte",
+        2: "Getränke",
+        3: "Desserts",
+        4: "Vorspeisen"
+    }
+    titel_label.config(text=kategorie_namen.get(kategorieID, "Produkte"))
+
+    # Produkte laden und anzeigen
+    produkte = lade_produkte_nach_kategorie(kategorieID)
+    for name, beschr, preis in produkte:
+        frame = tk.Frame(inhalt_frame, **styles.STYLE_FRAME)
+        frame.pack(fill="x", padx=10, pady=5, expand=True)
+
+        tk.Label(frame, text=name, **styles.STYLE_PRODUKTNAME).pack(anchor="w")
+        tk.Label(frame, text=beschr, **styles.STYLE_BESCHREIBUNG).pack(anchor="w")
+        tk.Label(frame, text=f"{preis:.2f} €", **styles.STYLE_PREIS).pack(anchor="e")
+
+
+# -----------------------------
+# Start der App
+# -----------------------------
 def start_app():
-    print("🔵 GUI wurde gestartet.")
     root = tk.Tk()
-    root.title("Digitale Speisekarte")
-    root.geometry("600x600")
+    root.title("Zum hungrigen Bären")
+    root.geometry("800x600")
+    root.configure(bg=styles.FARBE_HINTERGRUND)
 
-    canvas = tk.Canvas(root)
-    scrollbar = tk.Scrollbar(root, orient="vertical", command=canvas.yview)
-    scroll_frame = tk.Frame(canvas)
+    # Layout: Links Navigation, rechts Inhalt
+    nav_frame = tk.Frame(root, width=200, bg=styles.FARBE_KATEGORIE)
+    nav_frame.pack(side="left", fill="y")
 
-    scroll_frame.bind(
-        "<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-    )
+    content_frame = tk.Frame(root, bg=styles.FARBE_HINTERGRUND)
+    content_frame.pack(side="right", expand=True, fill="both")
 
-    canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+    titel_label = tk.Label(content_frame, text="", **styles.STYLE_TITEL)
+    titel_label.pack(anchor="w", padx=10)
+
+    # Scrollbarer Inhaltsbereich
+    canvas = tk.Canvas(content_frame, **styles.STYLE_CANVAS)
+    scrollbar = tk.Scrollbar(content_frame, orient="vertical", command=canvas.yview)
+
     canvas.configure(yscrollcommand=scrollbar.set)
-
-    canvas.pack(side="left", fill="both", expand=True)
     scrollbar.pack(side="right", fill="y")
+    canvas.pack(side="left", fill="both", expand=True)
 
-    produkte = lade_produkte()
-    print(f"🔍 {len(produkte)} Produkte aus DB geladen.")
-    aktuelle_kategorie = None
+    scrollable_frame = tk.Frame(canvas, bg=styles.FARBE_HINTERGRUND)
+    window_id = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
 
-    for name, beschreibung, preis, kategorie, verfuegbar in produkte:
-        if kategorie != aktuelle_kategorie:
-            lbl_kat = tk.Label(scroll_frame, text=kategorie, font=("Arial", 16, "bold"), pady=10)
-            lbl_kat.pack(anchor="w")
-            aktuelle_kategorie = kategorie
+    def on_frame_configure(event):
+        canvas.configure(scrollregion=canvas.bbox("all"))
 
-        frame = tk.Frame(scroll_frame, bd=1, relief="solid", padx=10, pady=5)
-        frame.pack(fill="x", padx=10, pady=5)
+    def on_resize(event):
+        canvas.itemconfig(window_id, width=event.width)
 
-        lbl_name = tk.Label(frame, text=name, font=("Arial", 12, "bold"))
-        lbl_name.pack(anchor="w")
+    scrollable_frame.bind("<Configure>", on_frame_configure)
+    canvas.bind("<Configure>", on_resize)
 
-        lbl_beschr = tk.Label(frame, text=beschreibung, font=("Arial", 10), fg="gray")
-        lbl_beschr.pack(anchor="w")
+    # Navigations-Buttons
+    buttons = [
+        ("Vorspeisen", 4),
+        ("Hauptgerichte", 1),
+        ("Desserts", 3),
+        ("Getränke", 2),
+    ]
 
-        lbl_preis = tk.Label(frame, text=f"Preis: {preis:.2f} €", font=("Arial", 10, "italic"))
-        lbl_preis.pack(anchor="w")
+    for label, kat_id in buttons:
+        btn = tk.Button(nav_frame, text=label, command=lambda k=kat_id: zeige_kategorie(k, scrollable_frame, titel_label), **styles.STYLE_BUTTON)
+        btn.pack(fill="x")
 
-        status = "✅ Verfügbar" if verfuegbar else "⛔ Nicht verfügbar"
-        lbl_status = tk.Label(frame, text=status, font=("Arial", 9, "italic"), fg="green" if verfuegbar else "red")
-        lbl_status.pack(anchor="w")
+    # Warenkorb-Platzhalter
+    tk.Button(nav_frame, text="🛒 Warenkorb", **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+
+    # Standardanzeige (z.B. Hauptgerichte)
+    zeige_kategorie(1, scrollable_frame, titel_label)
 
     root.mainloop()
-
-
-# Optionaler Direktstart
-if __name__ == "__main__":
-    start_app()

@@ -10,7 +10,8 @@ def init_kategorien():
     kategorien = [
         (1, "Hauptgerichte"),
         (2, "Getränke"),
-        (3, "Desserts")
+        (3, "Desserts"),
+        (4, "Vorspeisen")
     ]
 
     for kategorieID, bezeichnung in kategorien:
@@ -22,6 +23,3 @@ def init_kategorien():
     conn.commit()
     conn.close()
     print("✅ Kategorien wurden eingefügt (oder waren bereits vorhanden).")
-
-if __name__ == "__main__":
-    init_kategorien()

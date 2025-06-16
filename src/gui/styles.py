@@ -90,3 +90,14 @@ STYLE_BESCHREIBUNG = {
     "fg": "#666666",
     "font": FONT_TEXT
 }
+
+# Warenkorbzeile (für Bestellpositionen)
+STYLE_WARENKORB_POSITION = {
+    "bg": FARBE_KARTE,
+    "fg": FARBE_TEXT,
+    "font": FONT_TEXT,
+    "anchor": "w",
+    "padx": 10,
+    "pady": 4
+}
+

@@ -4,6 +4,8 @@
 # --------------------------------------------------
 from abc import ABC, abstractmethod
 from datetime import datetime
+import sqlite3
+from src.db import DB_PATH
 
 
 # -------------------------
@@ -24,6 +26,29 @@ class Produkt(ABC):
     @abstractmethod
     def anzeigen(self):
         pass
+
+    @classmethod
+    def lade_alle_aus_db(cls, kategorieID):
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT produktID, name, beschreibung, preis, typ, groesse, vegetarisch, vegan, herkunft
+            FROM produkt
+            WHERE verfuegbar = 1 AND kategorieID = ?
+            ORDER BY name
+        """, (kategorieID,))
+        rows = cursor.fetchall()
+        conn.close()
+
+        produkte = []
+        for row in rows:
+            produktID, name, beschreibung, preis, typ, groesse, vegetarisch, vegan, herkunft = row
+            if typ == "Getränk":
+                produkte.append(Getraenk(produktID, name, beschreibung, preis, kategorieID, True, groesse))
+            else:
+                produkte.append(Speise(produktID, name, beschreibung, preis, kategorieID, True,
+                                      bool(vegetarisch), bool(vegan), False, herkunft))
+        return produkte
 
 
 # -------------------------
@@ -149,3 +174,34 @@ class ProduktText:
 
     def textInSprache(self, sprachID):
         return (self.name, self.beschreibung) if self.sprachID == sprachID else None
+
+# -------------------------
+# X. Klasse Warenkorb
+# -------------------------
+
+class Warenkorb:
+    def __init__(self):
+        self.positionen = []
+
+    def hinzufuegen(self, produkt, menge=1):
+        for pos in self.positionen:
+            if pos.produkt.produktID == produkt.produktID:
+                pos.menge += menge
+                return
+        self.positionen.append(Bestellposition(None, None, produkt, menge))
+
+    def loeschen(self, produkt):
+        self.positionen = [p for p in self.positionen if p.produkt != produkt]
+
+    def gesamtpreis(self):
+        return sum(p.teilpreis() for p in self.positionen)
+
+    def leeren(self):
+        self.positionen.clear()
+
+    def als_bestellung(self, bestellungID, tischID):
+        bestellung = Bestellung(bestellungID, tischID)
+        for pos in self.positionen:
+            bestellung.hinzufuegen(pos.produkt, pos.menge)
+        return bestellung
+

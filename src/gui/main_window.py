@@ -4,33 +4,17 @@
 # ------------------------------------------------------------
 from src.gui import styles
 import tkinter as tk
-import sqlite3
-from src.db import DB_PATH
-from src.models.restaurant_klassen import Bestellung, Bestellposition, Speise, Getraenk
+from src.models.restaurant_klassen import Warenkorb, Produkt
 
 # -----------------------------
 # Globale Warenkorb-Instanz
 # -----------------------------
-aktuelle_bestellung = Bestellung(bestellungID=1, tischID=1)
+warenkorb = Warenkorb()
 
 
 # -----------------------------
 # Kategorie-Navigation und Anzeige
 # -----------------------------
-def lade_produkte_nach_kategorie(kategorieID):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("""
-        SELECT produktID, name, beschreibung, preis, typ, groesse, vegetarisch, vegan, herkunft
-        FROM produkt
-        WHERE verfuegbar = 1 AND kategorieID = ?
-        ORDER BY name
-    """, (kategorieID,))
-    daten = cursor.fetchall()
-    conn.close()
-    return daten
-
-
 def zeige_kategorie(kategorieID, inhalt_frame, titel_label):
     for widget in inhalt_frame.winfo_children():
         widget.destroy()
@@ -43,26 +27,18 @@ def zeige_kategorie(kategorieID, inhalt_frame, titel_label):
     }
     titel_label.config(text=kategorie_namen.get(kategorieID, "Produkte"))
 
-    produkte = lade_produkte_nach_kategorie(kategorieID)
-    for produktID, name, beschr, preis, typ, groesse, vegetarisch, vegan, herkunft in produkte:
+    produkte = Produkt.lade_alle_aus_db(kategorieID)
+    for produkt in produkte:
         frame = tk.Frame(inhalt_frame, **styles.STYLE_FRAME)
         frame.pack(fill="x", padx=10, pady=5, expand=True)
 
-        tk.Label(frame, text=name, **styles.STYLE_PRODUKTNAME).pack(anchor="w")
-        tk.Label(frame, text=beschr, **styles.STYLE_BESCHREIBUNG).pack(anchor="w")
-        tk.Label(frame, text=f"{preis:.2f} €", **styles.STYLE_PREIS).pack(anchor="e")
+        tk.Label(frame, text=produkt.name, **styles.STYLE_PRODUKTNAME).pack(anchor="w")
+        tk.Label(frame, text=produkt.beschreibung, **styles.STYLE_BESCHREIBUNG).pack(anchor="w")
+        tk.Label(frame, text=f"{produkt.preis:.2f} €", **styles.STYLE_PREIS).pack(anchor="e")
 
-        def hinzufuegen(produktID=produktID, name=name, beschr=beschr, preis=preis,
-                        kategorieID=kategorieID, typ=typ, groesse=groesse,
-                        vegetarisch=vegetarisch, vegan=vegan, herkunft=herkunft):
-            if typ == "Getränk":
-                produkt = Getraenk(produktID, name, beschr, preis, kategorieID, True, groesse)
-            else:
-                produkt = Speise(produktID, name, beschr, preis, kategorieID, True,
-                                 bool(vegetarisch), bool(vegan), False, herkunft)
-
-            aktuelle_bestellung.hinzufuegen(produkt, 1)
-            print(f"➕ '{name}' zum Warenkorb hinzugefügt.")
+        def hinzufuegen(p=produkt):
+            warenkorb.hinzufuegen(p, 1)
+            print(f"➕ '{p.name}' zum Warenkorb hinzugefügt.")
 
         tk.Button(frame, text="+ Hinzufügen", command=hinzufuegen, bg=styles.FARBE_PRIMÄR, fg="white").pack(anchor="e", pady=3)
 
@@ -76,7 +52,7 @@ def zeige_warenkorb(inhalt_frame):
 
     tk.Label(inhalt_frame, text="Warenkorb", **styles.STYLE_TITEL).pack(anchor="w", padx=10, pady=10)
 
-    for pos in aktuelle_bestellung.positionen:
+    for pos in warenkorb.positionen:
         frame = tk.Frame(inhalt_frame, **styles.STYLE_FRAME)
         frame.pack(fill="x", padx=10, pady=5)
 
@@ -87,12 +63,12 @@ def zeige_warenkorb(inhalt_frame):
         tk.Label(header, text=f"{pos.teilpreis():.2f} €", **styles.STYLE_PREIS).pack(anchor="e", side="right")
 
         def loesche_pos(p=pos):
-            aktuelle_bestellung.loeschen(p.produkt)
+            warenkorb.loeschen(p.produkt)
             zeige_warenkorb(inhalt_frame)
 
         tk.Button(frame, text="Entfernen", command=loesche_pos, bg="red", fg="white", font=("Segoe UI", 9)).pack(anchor="e", pady=2)
 
-    gesamt = aktuelle_bestellung.gesamtpreis()
+    gesamt = warenkorb.gesamtpreis()
     tk.Label(inhalt_frame, text=f"Gesamt: {gesamt:.2f} €", **styles.STYLE_PREIS).pack(anchor="e", padx=10, pady=10)
 
 

@@ -1,6 +1,6 @@
 # src/gui/main_window.py
 # ------------------------------------------------------------
-# GUI mit Grid-Layout für Produktanzeige
+# GUI mit Grid-Layout für Produktanzeige und Tisch-Auswahl
 # ------------------------------------------------------------
 from src.gui import styles
 import tkinter as tk
@@ -8,6 +8,7 @@ from src.models.restaurant_klassen import Warenkorb, Produkt
 
 warenkorb = Warenkorb()
 sprache_var = None
+tisch_var = None
 aktuelle_kategorieID = 1
 scrollable_frame = None
 canvas = None
@@ -27,7 +28,8 @@ TEXTS = {
         "Herkunft": "Herkunft",
         "Hinzufügen": "+ Hinzufügen",
         "Entfernen": "Entfernen",
-        "Gesamt": "Gesamt"
+        "Gesamt": "Gesamt",
+        "Tisch": "Tisch"
     },
     "fr": {
         "Hauptgerichte": "Plats principaux",
@@ -42,7 +44,8 @@ TEXTS = {
         "Herkunft": "Origine",
         "Hinzufügen": "+ Ajouter",
         "Entfernen": "Supprimer",
-        "Gesamt": "Total"
+        "Gesamt": "Total",
+        "Tisch": "Table"
     },
     "en": {
         "Hauptgerichte": "Main Courses",
@@ -57,7 +60,8 @@ TEXTS = {
         "Herkunft": "Origin",
         "Hinzufügen": "+ Add",
         "Entfernen": "Remove",
-        "Gesamt": "Total"
+        "Gesamt": "Total",
+        "Tisch": "Table"
     }
 }
 
@@ -117,7 +121,7 @@ def zeige_kategorie(kategorieID, titel_label, sprache):
             hinweis_text = f"{texts['Hinweis']}: " + ", ".join(hinweise)
             tk.Label(frame, text=hinweis_text, **styles.STYLE_BESCHREIBUNG).pack(anchor="w")
 
-        tk.Label(frame, text=f"{produkt.preis:.2f} €", **styles.STYLE_PREIS).pack(anchor="e")
+        tk.Label(frame, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="e")
 
         tk.Button(
             frame,
@@ -126,8 +130,6 @@ def zeige_kategorie(kategorieID, titel_label, sprache):
             bg=styles.FARBE_PRIMÄR,
             fg="white"
         ).pack(anchor="e", pady=3)
-
-# (Rest bleibt gleich – z. B. zeige_warenkorb(), start_app() usw.)
 
 def zeige_warenkorb(titel_label):
     sprache = sprache_var.get()
@@ -139,24 +141,30 @@ def zeige_warenkorb(titel_label):
     titel_label.config(text=texts["Warenkorb"])
 
     for i, pos in enumerate(warenkorb.positionen):
-        frame = tk.Frame(scrollable_frame, **styles.STYLE_FRAME)
-        frame.grid(row=i, column=0, columnspan=3, padx=10, pady=5, sticky="ew")
+        row = i // 3
+        col = i % 3
+
+        frame = tk.Frame(scrollable_frame, width=246, height=132, **styles.STYLE_FRAME)
+        frame.grid(row=row, column=col, padx=10, pady=10)
+        frame.grid_propagate(False)
 
         header = tk.Frame(frame, bg=styles.FARBE_KARTE)
         header.pack(fill="x")
 
         tk.Label(header, text=f"{pos.menge}× {pos.produkt.name}", **styles.STYLE_PRODUKTNAME).pack(anchor="w", side="left")
-        tk.Label(header, text=f"{pos.teilpreis():.2f} €", **styles.STYLE_PREIS).pack(anchor="e", side="right")
+        tk.Label(header, text=f"{pos.teilpreis():.2f} CHF", **styles.STYLE_PREIS).pack(anchor="e", side="right")
 
         tk.Button(frame, text=texts["Entfernen"],
                   command=lambda p=pos.produkt: (warenkorb.loeschen(p), zeige_warenkorb(titel_label)),
                   bg="red", fg="white", font=("Segoe UI", 9)).pack(anchor="e", pady=2)
 
-    gesamt = warenkorb.gesamtpreis()
-    tk.Label(scrollable_frame, text=f"{texts['Gesamt']}: {gesamt:.2f} €", **styles.STYLE_PREIS).grid(row=i+1, column=0, columnspan=3, sticky="e", padx=10, pady=10)
+    total_row = (len(warenkorb.positionen) - 1) // 3 + 1
+    tk.Label(scrollable_frame, text=f"{texts['Gesamt']}: {warenkorb.gesamtpreis():.2f} CHF", **styles.STYLE_PREIS).grid(
+        row=total_row, column=0, columnspan=3, sticky="e", padx=10, pady=10
+    )
 
 def start_app():
-    global sprache_var
+    global sprache_var, tisch_var
 
     root = tk.Tk()
     root.title("Zum hungrigen Bären")
@@ -164,6 +172,7 @@ def start_app():
     root.configure(bg=styles.FARBE_HINTERGRUND)
 
     sprache_var = tk.StringVar(value="de")
+    tisch_var = tk.IntVar(value=1)
 
     nav_frame = tk.Frame(root, width=200, bg=styles.FARBE_KATEGORIE)
     nav_frame.pack(side="left", fill="y")
@@ -183,6 +192,11 @@ def start_app():
     )
     sprache_dropdown.config(bg="white")
     sprache_dropdown.pack(side="right")
+
+    # Dropdown für Tischwahl
+    tisch_dropdown = tk.OptionMenu(top_frame, tisch_var, *range(1, 11))
+    tisch_dropdown.config(bg="white")
+    tisch_dropdown.pack(side="right", padx=10)
 
     erstelle_scroll_frame(content_frame)
 

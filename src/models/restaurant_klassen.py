@@ -1,12 +1,7 @@
-# src/models/restaurant_klassen.py
-# --------------------------------------------------
-# Python-Klassen entsprechend UML-Definitionen
-# --------------------------------------------------
 from abc import ABC, abstractmethod
 from datetime import datetime
 import sqlite3
 from src.db import DB_PATH
-
 
 # -------------------------
 # 1. Abstrakte Klasse Produkt
@@ -27,29 +22,53 @@ class Produkt(ABC):
     def anzeigen(self):
         pass
 
-    @classmethod
-    def lade_alle_aus_db(cls, kategorieID):
+    @staticmethod
+    def lade_alle_aus_db(kategorieID, sprache="de"):
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT produktID, name, beschreibung, preis, typ, groesse, vegetarisch, vegan, herkunft
+            SELECT produktID, name, name_fr, name_en,
+                   beschreibung, beschreibung_fr, beschreibung_en,
+                   preis, typ, groesse, vegetarisch, vegan, herkunft, verfuegbar, kategorieID
             FROM produkt
             WHERE verfuegbar = 1 AND kategorieID = ?
-            ORDER BY name
         """, (kategorieID,))
-        rows = cursor.fetchall()
+
+        daten = cursor.fetchall()
         conn.close()
 
         produkte = []
-        for row in rows:
-            produktID, name, beschreibung, preis, typ, groesse, vegetarisch, vegan, herkunft = row
-            if typ == "Getränk":
-                produkte.append(Getraenk(produktID, name, beschreibung, preis, kategorieID, True, groesse))
+        for row in daten:
+            produktID, name_de, name_fr, name_en, \
+                beschr_de, beschr_fr, beschr_en, preis, typ, groesse, \
+                vegetarisch, vegan, herkunft, verfuegbar, kID = row
+
+            if sprache == "fr":
+                name = name_fr or name_de
+                beschreibung = beschr_fr or beschr_de
+            elif sprache == "en":
+                name = name_en or name_de
+                beschreibung = beschr_en or beschr_de
             else:
-                produkte.append(Speise(produktID, name, beschreibung, preis, kategorieID, True,
-                                      bool(vegetarisch), bool(vegan), False, herkunft))
+                name = name_de
+                beschreibung = beschr_de
+
+            if typ == "Getränk":
+                produkt = Getraenk(produktID, name, beschreibung, preis, kID, verfuegbar, groesse)
+            else:
+                produkt = Speise(produktID, name, beschreibung, preis, kID, verfuegbar,
+                                 bool(vegetarisch), bool(vegan), False, herkunft)
+            produkte.append(produkt)
         return produkte
 
+    def __eq__(self, other):
+        result = isinstance(other, Produkt) and self.produktID == other.produktID
+        if not result:
+            print(f"🔍 Vergleich fehlgeschlagen: {self.produktID} vs {getattr(other, 'produktID', 'N/A')}")
+        return result
+
+    def __hash__(self):
+        return hash(self.produktID)
 
 # -------------------------
 # 2. Subklasse Speise
@@ -66,7 +85,6 @@ class Speise(Produkt):
     def anzeigen(self):
         return f"{self.name} ({self.preis:.2f} CHF) - {self.beschreibung}"
 
-
 # -------------------------
 # 3. Subklasse Getränk
 # -------------------------
@@ -78,7 +96,6 @@ class Getraenk(Produkt):
     def anzeigen(self):
         return f"{self.name} ({self.groesse}) - {self.preis:.2f} CHF"
 
-
 # -------------------------
 # 4. Klasse Kategorie
 # -------------------------
@@ -89,7 +106,6 @@ class Kategorie:
 
     def alleProdukte(self, datenquelle):
         return [p for p in datenquelle if p.kategorieID == self.kategorieID]
-
 
 # -------------------------
 # 5. Klasse Tisch
@@ -106,7 +122,6 @@ class Tisch:
 
     def clusterZuweisen(self, clusterID):
         self.clusterID = clusterID
-
 
 # -------------------------
 # 6. Klasse Bestellung
@@ -132,7 +147,6 @@ class Bestellung:
     def loeschen(self, produkt):
         self.positionen = [p for p in self.positionen if p.produkt != produkt]
 
-
 # -------------------------
 # 7. Klasse Bestellposition
 # -------------------------
@@ -149,7 +163,6 @@ class Bestellposition:
     def beschreibung(self):
         return f"{self.menge}× {self.produkt.name} = {self.teilpreis():.2f} CHF"
 
-
 # -------------------------
 # 8. Klasse Sprache
 # -------------------------
@@ -160,7 +173,6 @@ class Sprache:
 
     def alsCode(self):
         return self.bezeichnung[:2].upper()
-
 
 # -------------------------
 # 9. Klasse ProduktText
@@ -178,7 +190,6 @@ class ProduktText:
 # -------------------------
 # X. Klasse Warenkorb
 # -------------------------
-
 class Warenkorb:
     def __init__(self):
         self.positionen = []
@@ -191,7 +202,7 @@ class Warenkorb:
         self.positionen.append(Bestellposition(None, None, produkt, menge))
 
     def loeschen(self, produkt):
-        self.positionen = [p for p in self.positionen if p.produkt != produkt]
+        self.positionen = [p for p in self.positionen if p.produkt.produktID != produkt.produktID]
 
     def gesamtpreis(self):
         return sum(p.teilpreis() for p in self.positionen)
@@ -204,4 +215,3 @@ class Warenkorb:
         for pos in self.positionen:
             bestellung.hinzufuegen(pos.produkt, pos.menge)
         return bestellung
-

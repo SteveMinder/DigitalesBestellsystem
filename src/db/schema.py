@@ -21,19 +21,23 @@ def create_tables():
     );
 
     CREATE TABLE IF NOT EXISTS produkt (
-        produktID INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        beschreibung TEXT,
-        preis REAL,
-        typ TEXT,
-        groesse TEXT,
-        vegetarisch BOOLEAN,
-        vegan BOOLEAN,
-        herkunft TEXT,
-        verfuegbar BOOLEAN,
-        kategorieID INTEGER,
-        FOREIGN KEY (kategorieID) REFERENCES kategorie(kategorieID)
-    );
+    produktID INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    beschreibung TEXT,
+    name_fr TEXT,
+    beschreibung_fr TEXT,
+    name_en TEXT,
+    beschreibung_en TEXT,
+    preis REAL,
+    typ TEXT,
+    groesse TEXT,
+    vegetarisch BOOLEAN,
+    vegan BOOLEAN,
+    herkunft TEXT,
+    verfuegbar BOOLEAN,
+    kategorieID INTEGER,
+    FOREIGN KEY (kategorieID) REFERENCES kategorie(kategorieID)
+);
 
     CREATE TABLE IF NOT EXISTS tisch (
         tischID INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -51,13 +51,18 @@ def importiere_csv(dateipfad):
             # Neues Produkt einfügen
             cursor.execute("""
                 INSERT INTO produkt (
-                    name, beschreibung, preis, typ,
-                    groesse, vegetarisch, vegan,
+                    name, name_fr, name_en,
+                    beschreibung, beschreibung_fr, beschreibung_en,
+                    preis, typ, groesse, vegetarisch, vegan,
                     herkunft, verfuegbar, kategorieID
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
-                name,
+                row["name"],
+                row.get("name_fr") or None,
+                row.get("name_en") or None,
                 row["beschreibung"],
+                row.get("beschreibung_fr") or None,
+                row.get("beschreibung_en") or None,
                 float(row["preis"]),
                 row["typ"],
                 row["groesse"] or None,
@@ -67,6 +72,7 @@ def importiere_csv(dateipfad):
                 True,
                 int(row["kategorieID"])
             ))
+
             neu_importiert += 1
             print(f"✅ Produkt importiert: {name}")
 

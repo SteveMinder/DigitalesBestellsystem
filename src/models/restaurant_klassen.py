@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 import sqlite3
 from src.db import DB_PATH
+from tkinter import Frame, Label
 
 # -------------------------
 # 1. Abstrakte Klasse Produkt
@@ -70,6 +71,47 @@ class Produkt(ABC):
     def __hash__(self):
         return hash(self.produktID)
 
+    @staticmethod
+    def zeige_kategorie(kategorieID, scrollable_frame, titel_label, TEXTS, sprache, warenkorb):
+        from tkinter import Frame, Label, Button
+        from src.gui import styles
+        from src.models.restaurant_klassen import Produkt
+
+        texts = TEXTS.get(sprache, TEXTS["de"])
+
+        for widget in scrollable_frame.winfo_children():
+            widget.destroy()
+
+        kategorien = {
+            1: "Hauptgerichte",
+            2: "Getränke",
+            3: "Desserts",
+            4: "Vorspeisen"
+        }
+
+        titel_label.config(text=texts.get(kategorien[kategorieID], texts["Produkte"]))
+
+        produkte = Produkt.lade_alle_aus_db(kategorieID, sprache)
+        spalten = 3
+
+        for index, produkt in enumerate(produkte):
+            row = index // spalten
+            col = index % spalten
+
+            frame = Frame(scrollable_frame, **styles.STYLE_FRAME)
+            frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+
+            Label(frame, text=produkt.name, **styles.STYLE_PRODUKTNAME).pack(anchor="w")
+            Label(frame, text=produkt.beschreibung, **styles.STYLE_BESCHREIBUNG).pack(anchor="w")
+            Label(frame, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="e")
+            Button(
+                frame,
+                text=texts["Hinzufügen"],
+                command=lambda p=produkt: warenkorb.hinzufuegen(p, 1),
+                bg=styles.FARBE_PRIMÄR,
+                fg="white"
+            ).pack(anchor="e", pady=3)
+
 # -------------------------
 # 2. Subklasse Speise
 # -------------------------
@@ -123,6 +165,17 @@ class Tisch:
     def clusterZuweisen(self, clusterID):
         self.clusterID = clusterID
 
+    @staticmethod
+    def lade_anzeigen():
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT tischID, sitzplaetze FROM tisch ORDER BY tischID")
+        daten = cursor.fetchall()
+        conn.close()
+        anzeigen = [f"Tisch {tid} ({plaetze} Plätze)" for tid, plaetze in daten]
+        id_map = {f"Tisch {tid} ({plaetze} Plätze)": tid for tid, plaetze in daten}
+        return anzeigen, id_map
+
 # -------------------------
 # 6. Klasse Bestellung
 # -------------------------
@@ -146,6 +199,88 @@ class Bestellung:
 
     def loeschen(self, produkt):
         self.positionen = [p for p in self.positionen if p.produkt != produkt]
+
+    def speichern(self):
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO bestellung (tischID, zeitstempel, status) VALUES (?, ?, ?)",
+            (self.tischID, self.zeitstempel.isoformat(), self.status)
+        )
+        self.bestellungID = cursor.lastrowid
+        for pos in self.positionen:
+            cursor.execute(
+                "INSERT INTO bestellposition (bestellungID, produktID, menge) VALUES (?, ?, ?)",
+                (self.bestellungID, pos.produkt.produktID, pos.menge)
+            )
+        conn.commit()
+        conn.close()
+        return self.bestellungID
+
+    @staticmethod
+    def zeige_bestellungen(scrollable_frame, titel_label, TEXTS, tisch_id, sprache):
+        if not tisch_id:
+            print("❗ Kein Tisch ausgewählt für Bestellungsanzeige.")
+            return
+
+        for widget in scrollable_frame.winfo_children():
+            widget.destroy()
+
+        texts = TEXTS.get(sprache, TEXTS["de"])
+        bestellungen = Bestellung.lade_bestellungen_fuer_tisch(tisch_id)
+
+        titel_label.config(text=f"{texts['Bestellungen']} Tisch {tisch_id}")
+
+        for i, b in enumerate(bestellungen):
+            frame = Frame(scrollable_frame, bg="#f0f0f0", bd=1, relief="solid")
+            frame.grid(row=i, column=0, padx=10, pady=5, sticky="w")
+
+            header = f"🧾 Bestellung {b['id']} ({b['zeit']}, Status: {b['status']})"
+            Label(frame, text=header, font=("Segoe UI", 10, "bold"), anchor="w").pack(anchor="w")
+
+            for name, menge, preis in b['positionen']:
+                text = f"  - {menge}× {name} = {menge * preis:.2f} CHF"
+                Label(frame, text=text, anchor="w").pack(anchor="w")
+
+    @staticmethod
+    def bestellung_speichern(warenkorb, tisch_id):
+        if not tisch_id:
+            print("❗ Kein Tisch ausgewählt.")
+            return
+
+        bestellung = warenkorb.als_bestellung(None, tisch_id)
+        bestellung_id = bestellung.speichern()
+        print(f"✅ Bestellung {bestellung_id} gespeichert für Tisch {tisch_id}.")
+        warenkorb.leeren()
+
+    @staticmethod
+    def lade_bestellungen_fuer_tisch(tisch_id):
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT bestellungID, zeitstempel, status
+            FROM bestellung
+            WHERE tischID = ?
+            ORDER BY zeitstempel DESC
+        """, (tisch_id,))
+        bestellungen = cursor.fetchall()
+        result = []
+        for bestellung_id, zeit, status in bestellungen:
+            cursor.execute("""
+                SELECT p.name, bp.menge, p.preis
+                FROM bestellposition bp
+                JOIN produkt p ON bp.produktID = p.produktID
+                WHERE bp.bestellungID = ?
+            """, (bestellung_id,))
+            positionen = cursor.fetchall()
+            result.append({
+                "id": bestellung_id,
+                "zeit": zeit,
+                "status": status,
+                "positionen": positionen
+            })
+        conn.close()
+        return result
 
 # -------------------------
 # 7. Klasse Bestellposition
@@ -215,3 +350,36 @@ class Warenkorb:
         for pos in self.positionen:
             bestellung.hinzufuegen(pos.produkt, pos.menge)
         return bestellung
+
+    def zeige_warenkorb(self, scrollable_frame, titel_label, TEXTS, sprache):
+        from tkinter import Frame, Label, Button
+
+        texts = TEXTS.get(sprache, TEXTS["de"])
+
+        for widget in scrollable_frame.winfo_children():
+            widget.destroy()
+
+        titel_label.config(text=texts["Warenkorb"])
+
+        for i, pos in enumerate(self.positionen):
+            row = i // 3
+            col = i % 3
+
+            frame = Frame(scrollable_frame, width=246, height=132, bg="#f0f0f0", bd=1, relief="solid")
+            frame.grid(row=row, column=col, padx=10, pady=10)
+            frame.grid_propagate(False)
+
+            header = Frame(frame, bg="#e0e0e0")
+            header.pack(fill="x")
+
+            Label(header, text=f"{pos.menge}× {pos.produkt.name}", font=("Segoe UI", 10, "bold"), anchor="w").pack(anchor="w", side="left")
+            Label(header, text=f"{pos.teilpreis():.2f} CHF", font=("Segoe UI", 10), anchor="e").pack(anchor="e", side="right")
+
+            Button(frame, text=texts["Entfernen"],
+                   command=lambda p=pos.produkt: (self.loeschen(p), self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache)),
+                   bg="red", fg="white", font=("Segoe UI", 9)).pack(anchor="e", pady=2)
+
+        total_row = (len(self.positionen) - 1) // 3 + 1
+        Label(scrollable_frame, text=f"{texts['Gesamt']}: {self.gesamtpreis():.2f} CHF", font=("Segoe UI", 10)).grid(
+            row=total_row, column=0, columnspan=3, sticky="e", padx=10, pady=10
+        )

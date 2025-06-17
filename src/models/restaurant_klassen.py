@@ -16,13 +16,6 @@ class Produkt(ABC):
         self.kategorieID = kategorieID
         self.verfuegbar = verfuegbar
 
-    def istVerfuegbar(self):
-        return self.verfuegbar
-
-    @abstractmethod
-    def anzeigen(self):
-        pass
-
     @staticmethod
     def lade_alle_aus_db(kategorieID, sprache="de"):
         conn = sqlite3.connect(DB_PATH)
@@ -301,6 +294,30 @@ class Bestellung:
         conn.close()
         return result
 
+    @staticmethod
+    def wechsle_status(bestellung_id):
+        """Wechselt den Status einer Bestellung in der Reihenfolge: offen → in Bearbeitung → serviert → bezahlt."""
+        status_folge = ["offen", "in Bearbeitung", "serviert", "bezahlt"]
+
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT status FROM bestellung WHERE bestellungID = ?", (bestellung_id,))
+        row = cursor.fetchone()
+
+        if not row:
+            conn.close()
+            return
+
+        aktueller_status = row[0]
+        try:
+            neuer_status = status_folge[status_folge.index(aktueller_status) + 1]
+        except IndexError:
+            neuer_status = aktueller_status  # bleibt bei "bezahlt"
+
+        cursor.execute("UPDATE bestellung SET status = ? WHERE bestellungID = ?", (neuer_status, bestellung_id))
+        conn.commit()
+        conn.close()
 # -------------------------
 # 7. Klasse Bestellposition
 # -------------------------

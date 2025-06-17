@@ -30,67 +30,66 @@ TEXTS = {
         "Tisch": "Tisch",
         "Bestellungen": "Bestellungen"
     },
-    "fr": {
-        "Hauptgerichte": "Plats principaux",
-        "Getränke": "Boissons",
-        "Desserts": "Desserts",
-        "Vorspeisen": "Entrées",
-        "Produkte": "Produits",
-        "Warenkorb": "Panier",
-        "Hinweis": "Remarque",
-        "Vegetarisch": "Végétarien",
-        "Vegan": "Vegan",
-        "Herkunft": "Origine",
-        "Hinzufügen": "+ Ajouter",
-        "Entfernen": "Supprimer",
-        "Gesamt": "Total",
-        "Tisch": "Table",
-        "Bestellungen": "Commandes"
-    },
-    "en": {
-        "Hauptgerichte": "Main Courses",
-        "Getränke": "Drinks",
-        "Desserts": "Desserts",
-        "Vorspeisen": "Starters",
-        "Produkte": "Products",
-        "Warenkorb": "Cart",
-        "Hinweis": "Note",
-        "Vegetarisch": "Vegetarian",
-        "Vegan": "Vegan",
-        "Herkunft": "Origin",
-        "Hinzufügen": "+ Add",
-        "Entfernen": "Remove",
-        "Gesamt": "Total",
-        "Tisch": "Table",
-        "Bestellungen": "Orders"
-    }
+    "fr": { ... },
+    "en": { ... }
 }
 
-KATEGORIEN = {
-    1: "Hauptgerichte",
-    2: "Getränke",
-    3: "Desserts",
-    4: "Vorspeisen"
-}
+KATEGORIEN = { 1: "Hauptgerichte", 2: "Getränke", 3: "Desserts", 4: "Vorspeisen" }
 
 def erstelle_scroll_frame(content_frame):
     global canvas, scrollable_frame, window_id
-
     canvas = tk.Canvas(content_frame, **styles.STYLE_CANVAS)
     scrollbar = tk.Scrollbar(content_frame, orient="vertical", command=canvas.yview)
     canvas.configure(yscrollcommand=scrollbar.set)
     scrollbar.pack(side="right", fill="y")
     canvas.pack(side="left", fill="both", expand=True)
-
     scrollable_frame = tk.Frame(canvas, bg=styles.FARBE_HINTERGRUND)
     window_id = canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-
     scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
     canvas.bind("<Configure>", lambda e: canvas.itemconfig(window_id, width=e.width))
 
+def zeige_bestellungen_mit_status():
+    tisch_id = tisch_mapping.get(tisch_var_str.get())
+    if not tisch_id:
+        return
+    for widget in scrollable_frame.winfo_children():
+        widget.destroy()
+
+    texts = TEXTS.get(sprache_var.get(), TEXTS["de"])
+    bestellungen = Bestellung.lade_bestellungen_fuer_tisch(tisch_id)
+
+    farben = {
+        "offen": "#FFB347",
+        "in Bearbeitung": "#FFD700",
+        "serviert": "#90EE90",
+        "bezahlt": "#87CEFA"
+    }
+
+    for i, b in enumerate(bestellungen):
+        frame = tk.Frame(scrollable_frame, bg=farben.get(b['status'], "#f0f0f0"), bd=1, relief="solid")
+        frame.grid(row=i, column=0, padx=10, pady=5, sticky="w")
+
+        header = f"🧾 Bestellung {b['id']} ({b['zeit']}, Status: {b['status']})"
+        tk.Label(frame, text=header, font=("Segoe UI", 10, "bold"), anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
+
+        bestellwert = 0.0
+        for name, menge, preis in b['positionen']:
+            teilpreis = menge * preis
+            bestellwert += teilpreis
+            text = f"  - {menge}× {name} = {teilpreis:.2f} CHF"
+            tk.Label(frame, text=text, anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
+
+        def status_wechsel(b_id=b['id']):
+            Bestellung.wechsle_status(b_id)
+            zeige_bestellungen_mit_status()
+
+        tk.Button(
+            frame, text="🔁 Status ändern", command=status_wechsel,
+            bg="#FFA500", fg="white", font=("Segoe UI", 9)
+        ).pack(anchor="e", padx=5, pady=(0, 5))
+
 def start_app():
     global sprache_var, tisch_var_str, tisch_mapping, aktuelle_kategorieID
-
     root = tk.Tk()
     root.title("Zum hungrigen Bären")
     root.geometry("1000x700")
@@ -130,14 +129,21 @@ def start_app():
         aktuelle_kategorieID = kategorieID
         Produkt.zeige_kategorie(kategorieID, scrollable_frame, titel_label, TEXTS, sprache_var.get(), warenkorb)
 
-    for label, kat_id in [
-        ("Vorspeisen", 4),
-        ("Hauptgerichte", 1),
-        ("Desserts", 3),
-        ("Getränke", 2),
-    ]:
-        tk.Button(nav_frame, text=label, command=lambda k=kat_id: lade_kategorie(k),
-                  **styles.STYLE_BUTTON).pack(fill="x")
+    for label, kat_id in [("Vorspeisen", 4), ("Hauptgerichte", 1), ("Desserts", 3), ("Getränke", 2)]:
+        tk.Button(nav_frame, text=label, command=lambda k=kat_id: lade_kategorie(k), **styles.STYLE_BUTTON).pack(fill="x")
+
+    def zeige_warenkorb_mit_speichern():
+        warenkorb.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache_var.get())
+        if warenkorb.positionen:
+            def bestaetige_speichern():
+                antwort = messagebox.askyesno("Bestellung bestätigen", "Möchten Sie die Bestellung wirklich abschicken? Eine nachträgliche Änderung ist nicht möglich.")
+                if antwort:
+                    Bestellung.bestellung_speichern(warenkorb, tisch_mapping.get(tisch_var_str.get()))
+                    warenkorb.leeren()
+                    warenkorb.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache_var.get())
+
+            speichern_button = tk.Button(scrollable_frame, text="💾 Bestellung speichern", command=bestaetige_speichern, **styles.STYLE_BUTTON)
+            speichern_button.grid(row=999, column=0, columnspan=3, sticky="e", padx=10, pady=10)
 
     def alle_bestellungen_loeschen():
         antwort = messagebox.askyesno("Alle Bestellungen löschen", "Möchten Sie wirklich alle Bestellungen dauerhaft löschen?")
@@ -145,17 +151,9 @@ def start_app():
             Bestellung.loesche_alle_bestellungen()
             messagebox.showinfo("Erledigt", "Alle Bestellungen und der Zähler wurden gelöscht.")
 
-    tk.Button(nav_frame, text="🗑️ Alle Bestellungen löschen",
-              command=alle_bestellungen_loeschen,
-              **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
-
-    tk.Button(nav_frame, text="🛒 Warenkorb",
-              command=lambda: warenkorb.zeige_warenkorb_mit_speichern(scrollable_frame, titel_label, TEXTS, sprache_var.get(), tisch_mapping.get(tisch_var_str.get())),
-              **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
-
-    tk.Button(nav_frame, text="📋 Bestellungen anzeigen",
-              command=lambda: Bestellung.zeige_bestellungen(scrollable_frame, titel_label, TEXTS, tisch_mapping.get(tisch_var_str.get()), sprache_var.get()),
-              **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+    tk.Button(nav_frame, text="🗑️ Alle Bestellungen löschen", command=alle_bestellungen_loeschen, **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+    tk.Button(nav_frame, text="🛒 Warenkorb", command=zeige_warenkorb_mit_speichern, **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+    tk.Button(nav_frame, text="📋 Bestellungen anzeigen", command=zeige_bestellungen_mit_status, **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
 
     Produkt.zeige_kategorie(aktuelle_kategorieID, scrollable_frame, titel_label, TEXTS, sprache_var.get(), warenkorb)
     root.mainloop()

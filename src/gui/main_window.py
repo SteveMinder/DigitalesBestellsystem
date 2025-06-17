@@ -5,10 +5,13 @@
 from src.gui import styles
 import tkinter as tk
 from src.models.restaurant_klassen import Warenkorb, Produkt
+import sqlite3
+from src.db import DB_PATH
 
 warenkorb = Warenkorb()
 sprache_var = None
-tisch_var = None
+tisch_var_str = None
+tisch_mapping = {}
 aktuelle_kategorieID = 1
 scrollable_frame = None
 canvas = None
@@ -71,6 +74,16 @@ KATEGORIEN = {
     3: "Desserts",
     4: "Vorspeisen"
 }
+
+def lade_tisch_anzeigen():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT tischID, sitzplaetze FROM tisch ORDER BY tischID")
+    daten = cursor.fetchall()
+    conn.close()
+    anzeigen = [f"Tisch {tid} ({plaetze} Plätze)" for tid, plaetze in daten]
+    id_map = {f"Tisch {tid} ({plaetze} Plätze)": tid for tid, plaetze in daten}
+    return anzeigen, id_map
 
 def erstelle_scroll_frame(content_frame):
     global canvas, scrollable_frame, window_id
@@ -164,7 +177,7 @@ def zeige_warenkorb(titel_label):
     )
 
 def start_app():
-    global sprache_var, tisch_var
+    global sprache_var, tisch_var_str, tisch_mapping
 
     root = tk.Tk()
     root.title("Zum hungrigen Bären")
@@ -172,7 +185,8 @@ def start_app():
     root.configure(bg=styles.FARBE_HINTERGRUND)
 
     sprache_var = tk.StringVar(value="de")
-    tisch_var = tk.IntVar(value=1)
+    anzeigen, tisch_mapping = lade_tisch_anzeigen()
+    tisch_var_str = tk.StringVar(value=anzeigen[0] if anzeigen else "")
 
     nav_frame = tk.Frame(root, width=200, bg=styles.FARBE_KATEGORIE)
     nav_frame.pack(side="left", fill="y")
@@ -193,8 +207,8 @@ def start_app():
     sprache_dropdown.config(bg="white")
     sprache_dropdown.pack(side="right")
 
-    # Dropdown für Tischwahl
-    tisch_dropdown = tk.OptionMenu(top_frame, tisch_var, *range(1, 11))
+    # Dropdown für Tischwahl mit Anzeige
+    tisch_dropdown = tk.OptionMenu(top_frame, tisch_var_str, *anzeigen)
     tisch_dropdown.config(bg="white")
     tisch_dropdown.pack(side="right", padx=10)
 

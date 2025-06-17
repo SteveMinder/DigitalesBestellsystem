@@ -223,9 +223,11 @@ class Bestellung:
         cursor = conn.cursor()
         cursor.execute("DELETE FROM bestellposition")
         cursor.execute("DELETE FROM bestellung")
+        # Setzt Autoincrement-Zähler für 'bestellung' zurück
+        cursor.execute("DELETE FROM sqlite_sequence WHERE name='bestellung'")
         conn.commit()
         conn.close()
-        print("🗑️ Alle Bestellungen und Positionen wurden gelöscht.")
+        print("🗑️ Alle Bestellungen, Positionen und Zähler wurden gelöscht.")
 
     @staticmethod
     def zeige_bestellungen(scrollable_frame, titel_label, TEXTS, tisch_id, sprache):

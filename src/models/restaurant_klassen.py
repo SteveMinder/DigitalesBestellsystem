@@ -73,6 +73,8 @@ class Produkt(ABC):
 
         texts = TEXTS.get(sprache, TEXTS["de"])
 
+        scrollable_frame.configure(bg="#f8f8f8")
+
         for widget in scrollable_frame.winfo_children():
             widget.destroy()
 
@@ -95,14 +97,23 @@ class Produkt(ABC):
             row = index // spalten
             col = index % spalten
 
-            frame = Frame(scrollable_frame, width=280, height=150, **styles.STYLE_FRAME)
+            frame = Frame(
+                scrollable_frame,
+                width=280,
+                height=150,
+                bg="#ffffff",
+                bd=0,
+                relief="flat",
+                highlightbackground="#cccccc",
+                highlightthickness=1
+            )
             frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
             frame.grid_propagate(False)
 
             scrollable_frame.grid_columnconfigure(col, weight=1)
 
             # Innerer Container für Inhalte
-            inner = Frame(frame, bg=styles.FARBE_KARTE)
+            inner = Frame(frame, bg="#ffffff")
             inner.pack(fill="both", expand=True)
 
             Label(inner, text=produkt.name, wraplength=260, justify="left", **styles.STYLE_PRODUKTNAME).pack(anchor="w",
@@ -110,7 +121,7 @@ class Produkt(ABC):
                                                                                                              0, 2))
             Label(inner, text=produkt.beschreibung, wraplength=260, justify="left", **styles.STYLE_BESCHREIBUNG).pack(
                 anchor="w")
-            Label(inner, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="e")
+            Label(inner, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="se", padx=12)
 
             Button(
                 inner,
@@ -118,7 +129,7 @@ class Produkt(ABC):
                 command=lambda p=produkt: warenkorb.hinzufuegen(p, 1),
                 bg=styles.FARBE_PRIMÄR,
                 fg="white"
-            ).pack(anchor="e", pady=3)
+            ).pack(anchor="se", side="bottom", pady=6, padx=12)
 
 # -------------------------
 # 2. Subklasse Speise
@@ -447,7 +458,7 @@ class Warenkorb:
                 font=("Segoe UI", 9),
                 padx=6,
                 pady=2
-            ).pack(anchor="e", padx=6)
+            ).pack(anchor="se", pady=6, padx=12)
 
         total_row = (len(self.positionen) - 1) // spalten + 1
         Label(scrollable_frame, text=f"{texts['Gesamt']}: {self.gesamtpreis():.2f} CHF",

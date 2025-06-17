@@ -138,16 +138,19 @@ def start_app():
         tk.Button(nav_frame, text=label, command=lambda k=kat_id: lade_kategorie(k),
                   **styles.STYLE_BUTTON).pack(fill="x")
 
+    def zeige_warenkorb_mit_speichern():
+        warenkorb.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache_var.get())
+        speichern_button = tk.Button(scrollable_frame, text="💾 Bestellung speichern",
+                  command=lambda: Bestellung.bestellung_speichern(warenkorb, tisch_mapping.get(tisch_var_str.get())),
+                  **styles.STYLE_BUTTON)
+        speichern_button.grid(row=999, column=0, columnspan=3, sticky="e", padx=10, pady=10)
+
     tk.Button(nav_frame, text="🛒 Warenkorb",
-              command=lambda: warenkorb.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache_var.get()),
+              command=zeige_warenkorb_mit_speichern,
               **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
 
     tk.Button(nav_frame, text="📋 Bestellungen anzeigen",
               command=lambda: Bestellung.zeige_bestellungen(scrollable_frame, titel_label, TEXTS, tisch_mapping.get(tisch_var_str.get()), sprache_var.get()),
-              **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
-
-    tk.Button(nav_frame, text="💾 Bestellung speichern",
-              command=lambda: Bestellung.bestellung_speichern(warenkorb, tisch_mapping.get(tisch_var_str.get())),
               **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
 
     Produkt.zeige_kategorie(aktuelle_kategorieID, scrollable_frame, titel_label, TEXTS, sprache_var.get(), warenkorb)

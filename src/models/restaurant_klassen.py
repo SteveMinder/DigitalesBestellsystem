@@ -3,6 +3,7 @@ from datetime import datetime
 import sqlite3
 from src.db import DB_PATH
 from tkinter import Frame, Label
+from tkinter import messagebox
 
 # -------------------------
 # 1. Abstrakte Klasse Produkt
@@ -221,6 +222,13 @@ class Bestellung:
         conn.commit()
         conn.close()
         print("🗑️ Alle Bestellungen, Positionen und Zähler wurden gelöscht.")
+
+    def alle_bestellungen_loeschen():
+        antwort = messagebox.askyesno("Alle Bestellungen löschen",
+                                      "Möchten Sie wirklich alle Bestellungen dauerhaft löschen?")
+        if antwort:
+            Bestellung.loesche_alle_bestellungen()
+            messagebox.showinfo("Erledigt", "Alle Bestellungen und der Zähler wurden gelöscht.")
 
     @staticmethod
     def zeige_bestellungen(scrollable_frame, titel_label, TEXTS, tisch_id, sprache):

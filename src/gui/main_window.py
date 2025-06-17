@@ -1,5 +1,7 @@
+""
 from src.gui import styles
 import tkinter as tk
+from tkinter import messagebox
 from src.models.restaurant_klassen import Warenkorb, Produkt, Tisch, Bestellung
 
 warenkorb = Warenkorb()
@@ -140,10 +142,26 @@ def start_app():
 
     def zeige_warenkorb_mit_speichern():
         warenkorb.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache_var.get())
-        speichern_button = tk.Button(scrollable_frame, text="💾 Bestellung speichern",
-                  command=lambda: Bestellung.bestellung_speichern(warenkorb, tisch_mapping.get(tisch_var_str.get())),
-                  **styles.STYLE_BUTTON)
-        speichern_button.grid(row=999, column=0, columnspan=3, sticky="e", padx=10, pady=10)
+        if warenkorb.positionen:
+            def bestaetige_speichern():
+                antwort = messagebox.askyesno("Bestellung bestätigen", "Möchten Sie die Bestellung wirklich abschicken? Eine nachträgliche Änderung ist nicht möglich.")
+                if antwort:
+                    Bestellung.bestellung_speichern(warenkorb, tisch_mapping.get(tisch_var_str.get()))
+
+            speichern_button = tk.Button(scrollable_frame, text="💾 Bestellung speichern",
+                      command=bestaetige_speichern,
+                      **styles.STYLE_BUTTON)
+            speichern_button.grid(row=999, column=0, columnspan=3, sticky="e", padx=10, pady=10)
+
+    def alle_bestellungen_loeschen():
+        antwort = messagebox.askyesno("Alle Bestellungen löschen", "Möchten Sie wirklich alle Bestellungen dauerhaft löschen?")
+        if antwort:
+            Bestellung.loesche_alle_bestellungen()
+            messagebox.showinfo("Erledigt", "Alle Bestellungen wurden gelöscht.")
+
+    tk.Button(nav_frame, text="🗑️ Alle Bestellungen löschen",
+              command=alle_bestellungen_loeschen,
+              **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
 
     tk.Button(nav_frame, text="🛒 Warenkorb",
               command=zeige_warenkorb_mit_speichern,

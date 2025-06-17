@@ -218,6 +218,16 @@ class Bestellung:
         return self.bestellungID
 
     @staticmethod
+    def loesche_alle_bestellungen():
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM bestellposition")
+        cursor.execute("DELETE FROM bestellung")
+        conn.commit()
+        conn.close()
+        print("🗑️ Alle Bestellungen und Positionen wurden gelöscht.")
+
+    @staticmethod
     def zeige_bestellungen(scrollable_frame, titel_label, TEXTS, tisch_id, sprache):
         if not tisch_id:
             print("❗ Kein Tisch ausgewählt für Bestellungsanzeige.")

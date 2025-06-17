@@ -250,9 +250,16 @@ class Bestellung:
             header = f"🧾 Bestellung {b['id']} ({b['zeit']}, Status: {b['status']})"
             Label(frame, text=header, font=("Segoe UI", 10, "bold"), anchor="w").pack(anchor="w")
 
+            bestellwert = 0.0
             for name, menge, preis in b['positionen']:
-                text = f"  - {menge}× {name} = {menge * preis:.2f} CHF"
+                teilpreis = menge * preis
+                bestellwert += teilpreis
+                text = f"  - {menge}× {name} = {teilpreis:.2f} CHF"
                 Label(frame, text=text, anchor="w").pack(anchor="w")
+
+            # Einzelne Summe pro Bestellung anzeigen
+            Label(frame, text=f"💵 Summe: {bestellwert:.2f} CHF",
+                  font=("Segoe UI", 10, "italic"), anchor="e").pack(anchor="e", pady=(0, 5))
 
     @staticmethod
     def bestellung_speichern(warenkorb, tisch_id):
@@ -395,3 +402,33 @@ class Warenkorb:
         Label(scrollable_frame, text=f"{texts['Gesamt']}: {self.gesamtpreis():.2f} CHF", font=("Segoe UI", 10)).grid(
             row=total_row, column=0, columnspan=3, sticky="e", padx=10, pady=10
         )
+
+    def zeige_warenkorb_mit_speichern(self, scrollable_frame, titel_label, TEXTS, sprache, tisch_id):
+        from tkinter import Button, messagebox, Label
+
+        self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache)
+
+        if self.positionen:
+            def bestaetige_speichern():
+                antwort = messagebox.askyesno(
+                    "Bestellung bestätigen",
+                    "Möchten Sie die Bestellung wirklich abschicken? Eine nachträgliche Änderung ist nicht möglich."
+                )
+                if antwort:
+                    from .restaurant_klassen import Bestellung
+                    Bestellung.bestellung_speichern(self, tisch_id)
+                    self.leeren()
+                    self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache)
+
+            speichern_button = Button(
+                scrollable_frame,
+                text="💾 Bestellung speichern",
+                command=bestaetige_speichern,
+                bg="#4CAF50",
+                fg="white",
+                font=("Segoe UI", 10),
+                padx=10,
+                pady=5
+            )
+            speichern_button.grid(row=999, column=0, columnspan=3, sticky="e", padx=10, pady=10)
+

@@ -139,21 +139,6 @@ def start_app():
         tk.Button(nav_frame, text=label, command=lambda k=kat_id: lade_kategorie(k),
                   **styles.STYLE_BUTTON).pack(fill="x")
 
-    def zeige_warenkorb_mit_speichern():
-        warenkorb.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache_var.get())
-        if warenkorb.positionen:
-            def bestaetige_speichern():
-                antwort = messagebox.askyesno("Bestellung bestätigen", "Möchten Sie die Bestellung wirklich abschicken? Eine nachträgliche Änderung ist nicht möglich.")
-                if antwort:
-                    Bestellung.bestellung_speichern(warenkorb, tisch_mapping.get(tisch_var_str.get()))
-                    warenkorb.leeren()
-                    warenkorb.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache_var.get())
-
-            speichern_button = tk.Button(scrollable_frame, text="💾 Bestellung speichern",
-                      command=bestaetige_speichern,
-                      **styles.STYLE_BUTTON)
-            speichern_button.grid(row=999, column=0, columnspan=3, sticky="e", padx=10, pady=10)
-
     def alle_bestellungen_loeschen():
         antwort = messagebox.askyesno("Alle Bestellungen löschen", "Möchten Sie wirklich alle Bestellungen dauerhaft löschen?")
         if antwort:
@@ -165,7 +150,7 @@ def start_app():
               **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
 
     tk.Button(nav_frame, text="🛒 Warenkorb",
-              command=zeige_warenkorb_mit_speichern,
+              command=lambda: warenkorb.zeige_warenkorb_mit_speichern(scrollable_frame, titel_label, TEXTS, sprache_var.get(), tisch_mapping.get(tisch_var_str.get())),
               **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
 
     tk.Button(nav_frame, text="📋 Bestellungen anzeigen",

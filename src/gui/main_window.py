@@ -87,6 +87,7 @@ def erstelle_scroll_frame(content_frame):
 
 def zeige_bestellungen_mit_status():
     tisch_id = tisch_mapping.get(tisch_var_str.get())
+    titel_label.config(text=tisch_var_str.get())  # Zeigt den aktuellen Tischnamen als Überschrift
     if not tisch_id:
         return
     for widget in scrollable_frame.winfo_children():
@@ -104,24 +105,32 @@ def zeige_bestellungen_mit_status():
 
     for i, b in enumerate(bestellungen):
         frame = tk.Frame(scrollable_frame, bg=farben.get(b['status'], "#f0f0f0"), bd=1, relief="solid")
+        frame.grid_propagate(True)
+        frame.pack_propagate(True)
         frame.grid(row=i, column=0, padx=10, pady=5, sticky="w")
 
-        header = f"🧾 Bestellung {b['id']} ({b['zeit']}, Status: {b['status']})"
-        tk.Label(frame, text=header, font=("Segoe UI", 10, "bold"), anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
+        inner = tk.Frame(frame, bg=farben.get(b['status'], "#f0f0f0"))
+        inner.pack(fill="both", expand=True)
+
+        header = f"📋 Bestellung {b['id']} ({b['zeit']}, Status: {b['status']})"
+        tk.Label(inner, text=header, font=("Segoe UI", 10, "bold"), anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
 
         bestellwert = 0.0
         for name, menge, preis in b['positionen']:
             teilpreis = menge * preis
             bestellwert += teilpreis
             text = f"  - {menge}× {name} = {teilpreis:.2f} CHF"
-            tk.Label(frame, text=text, anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
+            tk.Label(inner, text=text, anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
+
+        summe_label = f"💵 {texts['Gesamt']}: {bestellwert:.2f} CHF"
+        tk.Label(inner, text=summe_label, font=("Segoe UI", 10, "italic"), anchor="e", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="e", pady=(0, 5))
 
         def status_wechsel(b_id=b['id']):
             Bestellung.wechsle_status(b_id)
             zeige_bestellungen_mit_status()
 
         tk.Button(
-            frame, text="🔁 Status ändern", command=status_wechsel,
+            inner, text="🔁 Status ändern", command=status_wechsel,
             bg="#FFA500", fg="white", font=("Segoe UI", 9)
         ).pack(anchor="e", padx=5, pady=(0, 5))
 
@@ -130,7 +139,7 @@ def start_app():
     global sprache_var, tisch_var_str, tisch_mapping, aktuelle_kategorieID
     root = tk.Tk()
     root.title("Zum hungrigen Bären")
-    root.geometry("1000x700")
+    root.geometry("1024x768")
     root.configure(bg=styles.FARBE_HINTERGRUND)
 
     sprache_var = tk.StringVar(value="de")
@@ -171,13 +180,9 @@ def start_app():
     for label, kat_id in [("Vorspeisen", 4), ("Hauptgerichte", 1), ("Desserts", 3), ("Getränke", 2)]:
         tk.Button(nav_frame, text=label, command=lambda k=kat_id: lade_kategorie(k), **styles.STYLE_BUTTON).pack(fill="x")
 
-    def alle_bestellungen_loeschen():
-        antwort = messagebox.askyesno("Alle Bestellungen löschen", "Möchten Sie wirklich alle Bestellungen dauerhaft löschen?")
-        if antwort:
-            Bestellung.loesche_alle_bestellungen()
-            messagebox.showinfo("Erledigt", "Alle Bestellungen und der Zähler wurden gelöscht.")
 
-    tk.Button(nav_frame, text="🗑️ Alle Bestellungen löschen", command=alle_bestellungen_loeschen, **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+    tk.Button(nav_frame, text="🗑️ Alle Bestellungen löschen", command=Bestellung.alle_bestellungen_loeschen, **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+
 
     tk.Button(nav_frame, text="🛒 Warenkorb", command=lambda: warenkorb.zeige_warenkorb_mit_speichern(
         scrollable_frame, titel_label, TEXTS, sprache_var.get(), tisch_mapping.get(tisch_var_str.get())

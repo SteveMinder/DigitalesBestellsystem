@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 import sqlite3
 from src.db import DB_PATH
-from tkinter import Frame, Label
 from tkinter import messagebox
+from tkinter import Frame, Label
 
 # -------------------------
 # 1. Abstrakte Klasse Produkt
@@ -86,20 +86,34 @@ class Produkt(ABC):
         titel_label.config(text=texts.get(kategorien[kategorieID], texts["Produkte"]))
 
         produkte = Produkt.lade_alle_aus_db(kategorieID, sprache)
-        spalten = 3
+        scrollable_frame.update_idletasks()
+        scrollable_width = scrollable_frame.winfo_width() or scrollable_frame.winfo_reqwidth()
+        kachel_breite = 300
+        spalten = max(2, scrollable_width // kachel_breite)
 
         for index, produkt in enumerate(produkte):
             row = index // spalten
             col = index % spalten
 
-            frame = Frame(scrollable_frame, **styles.STYLE_FRAME)
+            frame = Frame(scrollable_frame, width=280, height=150, **styles.STYLE_FRAME)
             frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+            frame.grid_propagate(False)
 
-            Label(frame, text=produkt.name, **styles.STYLE_PRODUKTNAME).pack(anchor="w")
-            Label(frame, text=produkt.beschreibung, **styles.STYLE_BESCHREIBUNG).pack(anchor="w")
-            Label(frame, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="e")
+            scrollable_frame.grid_columnconfigure(col, weight=1)
+
+            # Innerer Container für Inhalte
+            inner = Frame(frame, bg=styles.FARBE_KARTE)
+            inner.pack(fill="both", expand=True)
+
+            Label(inner, text=produkt.name, wraplength=260, justify="left", **styles.STYLE_PRODUKTNAME).pack(anchor="w",
+                                                                                                             pady=(
+                                                                                                             0, 2))
+            Label(inner, text=produkt.beschreibung, wraplength=260, justify="left", **styles.STYLE_BESCHREIBUNG).pack(
+                anchor="w")
+            Label(inner, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="e")
+
             Button(
-                frame,
+                inner,
                 text=texts["Hinzufügen"],
                 command=lambda p=produkt: warenkorb.hinzufuegen(p, 1),
                 bg=styles.FARBE_PRIMÄR,
@@ -223,6 +237,7 @@ class Bestellung:
         conn.close()
         print("🗑️ Alle Bestellungen, Positionen und Zähler wurden gelöscht.")
 
+    @staticmethod
     def alle_bestellungen_loeschen():
         antwort = messagebox.askyesno("Alle Bestellungen löschen",
                                       "Möchten Sie wirklich alle Bestellungen dauerhaft löschen?")
@@ -395,7 +410,7 @@ class Warenkorb:
             bestellung.hinzufuegen(pos.produkt, pos.menge)
         return bestellung
 
-    def zeige_warenkorb(self, scrollable_frame, titel_label, TEXTS, sprache):
+    def zeige_warenkorb(self, scrollable_frame, titel_label, TEXTS, sprache, tisch_id):
         from tkinter import Frame, Label, Button
 
         texts = TEXTS.get(sprache, TEXTS["de"])
@@ -405,33 +420,45 @@ class Warenkorb:
 
         titel_label.config(text=texts["Warenkorb"])
 
-        for i, pos in enumerate(self.positionen):
-            row = i // 3
-            col = i % 3
+        spalten = 2
+        for s in range(spalten):
+            scrollable_frame.grid_columnconfigure(s, weight=1)
 
-            frame = Frame(scrollable_frame, width=246, height=132, bg="#f0f0f0", bd=1, relief="solid")
-            frame.grid(row=row, column=col, padx=10, pady=10)
+        for i, pos in enumerate(self.positionen):
+            row = i // spalten
+            col = i % spalten
+
+            frame = Frame(scrollable_frame, width=260, height=110, bg="#ffffff", bd=1, relief="solid",
+                          highlightbackground="#dddddd", highlightthickness=1)
+            frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
             frame.grid_propagate(False)
 
-            header = Frame(frame, bg="#e0e0e0")
-            header.pack(fill="x")
+            Label(frame, text=f"{pos.menge}× {pos.produkt.name}", font=("Segoe UI", 10, "bold"), anchor="w").pack(
+                anchor="w", pady=(0, 2), padx=6)
+            Label(frame, text=f"{pos.teilpreis():.2f} CHF", font=("Segoe UI", 10, "italic"), anchor="w").pack(
+                anchor="w", pady=(0, 4), padx=6)
 
-            Label(header, text=f"{pos.menge}× {pos.produkt.name}", font=("Segoe UI", 10, "bold"), anchor="w").pack(anchor="w", side="left")
-            Label(header, text=f"{pos.teilpreis():.2f} CHF", font=("Segoe UI", 10), anchor="e").pack(anchor="e", side="right")
+            Button(
+                frame,
+                text="🗑️ Entfernen",
+                command=lambda p=pos.produkt: (self.loeschen(p), self.zeige_warenkorb_mit_speichern(scrollable_frame, titel_label, TEXTS,sprache, tisch_id)),
+                bg="#d62828",
+                fg="white",
+                font=("Segoe UI", 9),
+                padx=6,
+                pady=2
+            ).pack(anchor="e", padx=6)
 
-            Button(frame, text=texts["Entfernen"],
-                   command=lambda p=pos.produkt: (self.loeschen(p), self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache)),
-                   bg="red", fg="white", font=("Segoe UI", 9)).pack(anchor="e", pady=2)
-
-        total_row = (len(self.positionen) - 1) // 3 + 1
-        Label(scrollable_frame, text=f"{texts['Gesamt']}: {self.gesamtpreis():.2f} CHF", font=("Segoe UI", 10)).grid(
-            row=total_row, column=0, columnspan=3, sticky="e", padx=10, pady=10
+        total_row = (len(self.positionen) - 1) // spalten + 1
+        Label(scrollable_frame, text=f"{texts['Gesamt']}: {self.gesamtpreis():.2f} CHF",
+              font=("Segoe UI", 10, "bold")).grid(
+            row=total_row, column=0, columnspan=spalten, sticky="e", padx=10, pady=10
         )
 
     def zeige_warenkorb_mit_speichern(self, scrollable_frame, titel_label, TEXTS, sprache, tisch_id):
         from tkinter import Button, messagebox, Label
 
-        self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache)
+        self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache, tisch_id)
 
         if self.positionen:
             def bestaetige_speichern():
@@ -443,7 +470,7 @@ class Warenkorb:
                     from .restaurant_klassen import Bestellung
                     Bestellung.bestellung_speichern(self, tisch_id)
                     self.leeren()
-                    self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache)
+                    self.zeige_warenkorb(scrollable_frame, titel_label, TEXTS, sprache, tisch_id)
 
             speichern_button = Button(
                 scrollable_frame,

@@ -8,7 +8,7 @@ from db import schema
 from tools.init_kategorien import init_kategorien
 from tools.import_products import importiere_csv
 from gui.main_window import start_app
-
+from src.tools.import_tische import importiere_tische
 
 def main():
     """
@@ -24,12 +24,14 @@ def main():
     print("📁 Initialisiere Kategorien...")
     init_kategorien()
 
+    print("📁 Initialisiere Tische...")
+    importiere_tische("src/tools/tische.csv")
+
     print("🛒 Importiere Produkte aus CSV...")
     importiere_csv("tools/produkte.csv")
 
     print("🖥️ Starte GUI...")
     start_app()
-
 
 if __name__ == "__main__":
     main()

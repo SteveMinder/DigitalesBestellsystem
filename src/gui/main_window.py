@@ -41,56 +41,50 @@ def zeige_bestellungen_mit_status():
     texts = TEXTS.get(sprache_var.get(), TEXTS["de"])
     bestellungen = Bestellung.lade_bestellungen_fuer_tisch(tisch_id, sprache_var.get())
 
-    farben = {
-        "offen": "#FFB347",
-        "in Bearbeitung": "#FFD700",
-        "serviert": "#90EE90",
-        "bezahlt": "#87CEFA"
-    }
-
     for i, b in enumerate(bestellungen):
-        frame = tk.Frame(scrollable_frame, bg=farben.get(b['status'], "#f0f0f0"), bd=1, relief="solid")
+        statusfarbe = styles.FARBE_STATUS.get(b["status"], "#f0f0f0")
+        frame = tk.Frame(scrollable_frame, bg=statusfarbe, bd=1, relief="solid")
         frame.grid(row=i, column=0, padx=10, pady=5, sticky="w")
 
-        inner = tk.Frame(frame, bg=farben.get(b['status'], "#f0f0f0"))
+        inner = tk.Frame(frame, bg=statusfarbe)
         inner.pack(fill="both", expand=True)
 
-        status_wert = texts.get(b['status'], b['status'])  # z.B. "offen" → "Ouvert"
+        status_wert = texts.get(b['status'], b['status'])
         header = f"📋 {texts['Bestellung']} {b['id']} ({b['zeit']}, {texts['Status']}: {status_wert})"
-        tk.Label(inner, text=header, font=("Segoe UI", 10, "bold"), anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
+        tk.Label(inner, text=header, bg=statusfarbe, **styles.STYLE_BESTELLUNG_HEADER).pack(anchor="w")
 
         bestellwert = 0.0
         for name, menge, preis in b['positionen']:
             teilpreis = menge * preis
             bestellwert += teilpreis
             text = f"  - {menge}× {name} = {teilpreis:.2f} CHF"
-            tk.Label(inner, text=text, anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
+            tk.Label(inner, text=text, bg=statusfarbe, anchor="w").pack(anchor="w")
 
         summe_label = f"💵 {texts['Gesamt']}: {bestellwert:.2f} CHF"
-        tk.Label(inner, text=summe_label, font=("Segoe UI", 10, "italic"), anchor="e", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="e", pady=(0, 5))
+        tk.Label(inner, text=summe_label, bg=statusfarbe, **styles.STYLE_BESTELLUNG_SUMME).pack(anchor="e", pady=(0, 5))
 
         def status_wechsel(b_id=b['id']):
             Bestellung.wechsle_status(b_id)
             zeige_bestellungen_mit_status()
 
         tk.Button(
-            inner, text="🔁 " + texts["Status ändern"], command=status_wechsel,
-            bg="#FFA500", fg="white", font=("Segoe UI", 9)
+            inner,
+            text="🔁 " + texts["Status ändern"],
+            command=status_wechsel,
+            **styles.STYLE_BUTTON_STATUS
         ).pack(anchor="e", padx=5, pady=(0, 5))
 
         def rechnung_anzeigen(b_daten=b):
             Bestellung.zeige_rechnung_fuer_bestellung(
-                scrollable_frame, titel_label, TEXTS,
-                b_daten, sprache_var.get()
+                scrollable_frame, titel_label, TEXTS, b_daten, sprache_var.get()
             )
 
         tk.Button(
             inner,
-            text="💸 " + texts.get("Rechnung anzeigen", "Rechnung anzeigen"),
+            text="💸 " + texts["Rechnung anzeigen"],
             command=rechnung_anzeigen,
-            bg="#3a86ff", fg="white", font=("Segoe UI", 9)
+            **styles.STYLE_BUTTON_RECHNUNG
         ).pack(anchor="e", padx=5, pady=(0, 10))
-
 
 def erstelle_nav_buttons(sprache):
     texts = TEXTS.get(sprache, TEXTS["de"])
@@ -128,29 +122,23 @@ def aktualisiere_bottom_buttons(sprache):
 def sprache_gewechselt():
     sprache = sprache_var.get()
 
-    # Navigation & Footer aktualisieren
     erstelle_nav_buttons(sprache)
     aktualisiere_bottom_buttons(sprache)
 
-    # Tischnamen + Mapping neu laden
     neue_anzeigen, neue_mapping = Tisch.lade_anzeigen(sprache)
     global tisch_mapping
     tisch_mapping.clear()
     tisch_mapping.update(neue_mapping)
 
-    # Dropdown-Einträge ersetzen
     menu = tisch_dropdown["menu"]
     menu.delete(0, "end")
     for eintrag in neue_anzeigen:
         menu.add_command(label=eintrag, command=lambda value=eintrag: tisch_var_str.set(value))
 
-    # Auswahl beibehalten oder fallback
     if tisch_var_str.get() not in neue_anzeigen:
         tisch_var_str.set(neue_anzeigen[0] if neue_anzeigen else "")
 
-    # Kategorieanzeige aktualisieren
     Produkt.zeige_kategorie(aktuelle_kategorieID, scrollable_frame, titel_label, TEXTS, sprache, warenkorb)
-
 
 def lade_kategorie(kategorieID):
     global aktuelle_kategorieID
@@ -195,7 +183,6 @@ def start_app():
 
     erstelle_scroll_frame(content_frame)
 
-    # Bottom Buttons initialisieren
     texts = TEXTS["de"]
     bottom_buttons.clear()
     bottom_buttons.append(tk.Button(nav_frame, text="📋 " + texts["Bestellungen"], command=zeige_bestellungen_mit_status, **styles.STYLE_BUTTON))

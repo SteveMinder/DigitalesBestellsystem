@@ -5,6 +5,7 @@ from src.db import DB_PATH
 from tkinter import messagebox
 from tkinter import Frame, Label
 from src.lang.translations import TEXTS
+from src.gui import styles
 
 # -------------------------
 # 1. Abstrakte Klasse Produkt

@@ -1,0 +1,41 @@
+name,beschreibung,name_fr,beschreibung_fr,name_en,beschreibung_en,preis,typ,groesse,vegetarisch,vegan,herkunft,kategorieID
+Bruschetta,Geröstetes Brot mit Tomaten und Basilikum,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.5,Speise,,1,1,,4
+Caprese,Mozzarella mit Tomaten und Basilikum,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,5.5,Speise,,1,0,,4
+Rinds-Carpaccio,Dünn geschnittenes Rindfleisch mit Parmesan,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,7.8,Speise,,0,0,CH,4
+Kleiner gemischter Salat,Blattsalat mit Karotten und Gurken,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.0,Speise,,1,1,,4
+Kürbissuppe,Cremige Suppe mit gerösteten Kernen,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,5.2,Speise,,1,1,,4
+Tomatensuppe,Mit Basilikum und Creme fraiche,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.8,Speise,,1,0,,4
+Gefüllte Champignons,Mit Frischkäse überbacken,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,5.9,Speise,,1,0,,4
+Bunter Antipasti-Teller,Grillgemüse mit Oliven,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,6.5,Speise,,1,1,,4
+Mini-Frühlingsrollen,Mit Gemüsefuellung und Dip,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.4,Speise,,1,1,,4
+Räucherlachs auf Toast,Mit Dillsauce,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,6.9,Speise,,0,0,NO,4
+Spaghetti Bolognese,Nudeln mit Rindfleischsauce,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,9.5,Speise,,0,0,CH,1
+Veganes Gulasch,Herzhaftes Ragout auf Pflanzenbasis,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,8.9,Speise,,1,1,,1
+Linsensuppe,Herzhaft mit Karotten und Sellerie,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,5.9,Speise,,1,1,,1
+Pouletbrust mit Gemüse,"Gegrillt, auf saisonalem Gemüse",PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,11.5,Speise,,0,0,CH,1
+Rahmschnitzel,Schweinefilet in Pilzrahmsauce,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,12.8,Speise,,0,0,CH,1
+Gemüselasagne,"Mit Zucchini, Spinat und Bechamelsauce",PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,9.2,Speise,,1,0,,1
+Ratatouille,Provenzalischer Gemüseeintopf,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,8.5,Speise,,1,1,,1
+Schweizer Rösti,Mit Spiegelei und Käse,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,7.8,Speise,,1,0,CH,1
+Curry mit Reis,"Indisch, mit Kokosmilch und Gemüse",PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,9.9,Speise,,1,1,,1
+Fischfilet gebraten,Mit Zitronensauce und Kartoffeln,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,10.4,Speise,,0,0,NO,1
+Tiramisu,Italienisches Dessert mit Mascarpone,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.0,Speise,,0,0,,3
+Mousse au Chocolat,Schokoladendessert mit Rahm,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,3.9,Speise,,0,0,,3
+Obstsalat,Frische Früchte der Saison,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,3.5,Speise,,1,1,,3
+Schwarzwälder Kirschtorte,"Mit Sahne, Kirschen und Schokolade",PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.5,Speise,,0,0,,3
+Vanillepudding,Mit frischer Vanillesausse,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,3.2,Speise,,1,0,,3
+Creme brulee,Mit karamellisierter Zuckerschicht,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.0,Speise,,1,0,,3
+Brownie,Mit Walnüssen und Schokosauce,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,3.7,Speise,,0,0,,3
+Sorbet Trio,"Zitrone, Himbeere, Mango",PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,3.9,Speise,,1,1,,3
+Käseplatte,Verschiedene Kaesesorten mit Trauben,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,5.0,Speise,,1,0,CH,3
+Panna Cotta,Mit Beerensauce,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,4.1,Speise,,1,0,,3
+Cola 0.5l,Erfrischendes Getränk mit Kohlensaeure,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.5,Getränk,0.5l,1,1,,2
+Apfelschorle 0.5l,Erfrischendes Mischgetraenk,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.6,Getränk,0.5l,1,1,,2
+Eistee Zitrone 0.5l,"Hausgemacht, leicht gesüsst",PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.4,Getränk,0.5l,1,1,,2
+Kräutertee 0.3l,Beruhigend und wohltuend,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.2,Getränk,0.3l,1,1,,2
+Espresso,Kleiner schwarzer Kaffee,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.0,Getränk,0.1l,1,1,,2
+Mineralwasser still 0.5l,Ohne Kohlensäure,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.0,Getränk,0.5l,1,1,,2
+Mineralwasser mit Kohlensäure 0.5l,Erfrischend prickelnd,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.0,Getränk,0.5l,1,1,,2
+Orangensaft 0.3l,Frisch gepresst,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.8,Getränk,0.3l,1,1,,2
+Latte Macchiato,Mit aufgeschäumter Milch,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,3.2,Getränk,0.3l,1,0,,2
+Cappuccino,Mit Milchschaum,PLACEHOLDER_FR,PLACEHOLDER_FR,PLACEHOLDER_EN,PLACEHOLDER_EN,2.9,Getränk,0.25l,1,0,,2

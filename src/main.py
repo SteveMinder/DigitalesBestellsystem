@@ -12,11 +12,11 @@ from src.tools.import_tische import importiere_tische
 
 def main():
     """
-    Hauptfunktion des Programms:
-    1. Erstellt (falls nötig) die SQLite-Datenbank mit allen Tabellen.
-    2. Fügt Standard-Kategorien ein (falls noch nicht vorhanden).
-    3. Importiert Produkte aus CSV-Datei.
-    4. Startet die grafische Benutzeroberfläche.
+    Führt die Initialisierung des Systems aus:
+    1. Erstellt die SQLite-Datenbank mit allen Tabellen (falls nicht vorhanden).
+    2. Fügt Standard-Kategorien in die Datenbank ein.
+    3. Importiert Tische und Produkte aus CSV-Dateien.
+    4. Startet die grafische Benutzeroberfläche (GUI).
     """
     print("📦 Initialisiere Datenbank...")
     schema.create_tables()
@@ -28,7 +28,7 @@ def main():
     importiere_tische("src/tools/tische.csv")
 
     print("🛒 Importiere Produkte aus CSV...")
-    importiere_csv("tools/produkte.csv")
+    importiere_csv("src/tools/produkte.csv")
 
     print("🖥️ Starte GUI...")
     start_app()

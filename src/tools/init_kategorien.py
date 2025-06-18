@@ -1,12 +1,17 @@
-# src/tools/init_kategorien.py
+# tools/init_kategorien.py
+# --------------------------------------------------
+# Fügt Standard-Kategorien in die Datenbank ein.
+# Wird nur ausgeführt, wenn eine Kategorie noch fehlt.
+# --------------------------------------------------
 
 import sqlite3
 from src.db import DB_PATH
 
 def init_kategorien():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
+    """
+    Fügt eine Liste vordefinierter Kategorien in die Tabelle 'kategorie' ein,
+    falls diese dort noch nicht existieren (INSERT OR IGNORE).
+    """
     kategorien = [
         (1, "Hauptgerichte"),
         (2, "Getränke"),
@@ -14,6 +19,9 @@ def init_kategorien():
         (4, "Vorspeisen"),
         (5, "Alkoholhaltige Getränke")
     ]
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
 
     for kategorieID, bezeichnung in kategorien:
         cursor.execute("""

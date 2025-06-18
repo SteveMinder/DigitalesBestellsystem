@@ -1,9 +1,9 @@
-# src/tools/import_products.py
+# tools/import_products.py
 # ----------------------------------------------------
 # Importiert Produkte aus CSV und synchronisiert die Datenbank:
 # - Fügt neue Produkte ein
-# - Überspringt vorhandene
-# - Deaktiviert Produkte, die nicht mehr in der CSV enthalten sind
+# - Reaktiviert deaktivierte Produkte
+# - Deaktiviert veraltete Produkte
 # ----------------------------------------------------
 
 import os
@@ -20,6 +20,12 @@ sys.path.insert(0, project_root)
 from src.db import DB_PATH
 
 def importiere_csv(dateipfad):
+    """
+    Liest Produkte aus einer CSV-Datei und gleicht sie mit der Datenbank ab:
+    - Neue Produkte werden eingefügt
+    - Bereits existierende reaktiviert
+    - Nicht mehr enthaltene Produkte deaktiviert
+    """
     if not os.path.exists(dateipfad):
         print(f"❌ Fehler: Datei nicht gefunden: {dateipfad}")
         return
@@ -37,18 +43,15 @@ def importiere_csv(dateipfad):
             name = row["name"]
             csv_namen.add(name)
 
-            # Existiert das Produkt bereits?
             cursor.execute("SELECT COUNT(*) FROM produkt WHERE name = ?", (name,))
             exists = cursor.fetchone()[0] > 0
 
             if exists:
-                # Aktivieren, falls es deaktiviert war
                 cursor.execute("UPDATE produkt SET verfuegbar = 1 WHERE name = ?", (name,))
                 wieder_aktiviert += 1
-                print(f"♻️ Produkt reaktiviert oder aktualisiert: {name}")
+                print(f"♻️ Produkt reaktiviert: {name}")
                 continue
 
-            # Neues Produkt einfügen
             cursor.execute("""
                 INSERT INTO produkt (
                     name, name_fr, name_en,
@@ -72,16 +75,15 @@ def importiere_csv(dateipfad):
                 True,
                 int(row["kategorieID"])
             ))
-
             neu_importiert += 1
             print(f"✅ Produkt importiert: {name}")
 
-    # 🧹 Produkte deaktivieren, die nicht mehr in der CSV enthalten sind
+    # 🧹 Deaktivieren nicht mehr vorhandener Produkte
     cursor.execute("SELECT name FROM produkt")
     alle_db_namen = {row[0] for row in cursor.fetchall()}
     zu_deaktivieren = alle_db_namen - csv_namen
-    deaktiviert = 0
 
+    deaktiviert = 0
     for name in zu_deaktivieren:
         cursor.execute("UPDATE produkt SET verfuegbar = 0 WHERE name = ?", (name,))
         deaktiviert += 1
@@ -90,11 +92,12 @@ def importiere_csv(dateipfad):
     conn.commit()
     conn.close()
 
-    print(f"\n✅ {neu_importiert} neue Produkte importiert.")
-    print(f"♻️ {wieder_aktiviert} Produkte wieder aktiviert.")
-    print(f"⛔ {deaktiviert} Produkte deaktiviert.")
-    print(f"📦 Gesamtbestand jetzt: {len(csv_namen)} (aktiv laut CSV)")
+    print(f"\n📊 Import-Zusammenfassung:")
+    print(f"   ✅ Neu importiert:      {neu_importiert}")
+    print(f"   ♻️  Wieder aktiviert:    {wieder_aktiviert}")
+    print(f"   ⛔ Deaktiviert:         {deaktiviert}")
+    print(f"   📦 Aktive Produkte:     {len(csv_namen)}")
 
 if __name__ == "__main__":
-    csv_pfad = os.path.join(current_dir, "produkte.csv")
+    csv_pfad = os.path.join(os.path.dirname(__file__), "produkte.csv")
     importiere_csv(csv_pfad)

@@ -34,6 +34,7 @@ def zeige_bestellungen_mit_status():
     titel_label.config(text=tisch_var_str.get())
     if not tisch_id:
         return
+
     for widget in scrollable_frame.winfo_children():
         widget.destroy()
 
@@ -76,6 +77,20 @@ def zeige_bestellungen_mit_status():
             inner, text="🔁 " + texts["Status ändern"], command=status_wechsel,
             bg="#FFA500", fg="white", font=("Segoe UI", 9)
         ).pack(anchor="e", padx=5, pady=(0, 5))
+
+        def rechnung_anzeigen(b_daten=b):
+            Bestellung.zeige_rechnung_fuer_bestellung(
+                scrollable_frame, titel_label, TEXTS,
+                b_daten, sprache_var.get()
+            )
+
+        tk.Button(
+            inner,
+            text="💸 " + texts.get("Rechnung anzeigen", "Rechnung anzeigen"),
+            command=rechnung_anzeigen,
+            bg="#3a86ff", fg="white", font=("Segoe UI", 9)
+        ).pack(anchor="e", padx=5, pady=(0, 10))
+
 
 def erstelle_nav_buttons(sprache):
     texts = TEXTS.get(sprache, TEXTS["de"])

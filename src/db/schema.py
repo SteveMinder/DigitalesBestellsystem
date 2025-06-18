@@ -2,7 +2,7 @@
 # Erstellt alle Tabellen in der SQLite-Datenbank
 
 import sqlite3
-from . import DB_PATH  # <- Zugriff auf DB_PATH aus __init__.py
+from src.db import DB_PATH
 
 def create_tables():
     """
@@ -21,23 +21,23 @@ def create_tables():
     );
 
     CREATE TABLE IF NOT EXISTS produkt (
-    produktID INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    beschreibung TEXT,
-    name_fr TEXT,
-    beschreibung_fr TEXT,
-    name_en TEXT,
-    beschreibung_en TEXT,
-    preis REAL,
-    typ TEXT,
-    groesse TEXT,
-    vegetarisch BOOLEAN,
-    vegan BOOLEAN,
-    herkunft TEXT,
-    verfuegbar BOOLEAN,
-    kategorieID INTEGER,
-    FOREIGN KEY (kategorieID) REFERENCES kategorie(kategorieID)
-);
+        produktID INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        beschreibung TEXT,
+        name_fr TEXT,
+        beschreibung_fr TEXT,
+        name_en TEXT,
+        beschreibung_en TEXT,
+        preis REAL,
+        typ TEXT,
+        groesse TEXT,
+        vegetarisch BOOLEAN,
+        vegan BOOLEAN,
+        herkunft TEXT,
+        verfuegbar BOOLEAN,
+        kategorieID INTEGER,
+        FOREIGN KEY (kategorieID) REFERENCES kategorie(kategorieID)
+    );
 
     CREATE TABLE IF NOT EXISTS tisch (
         tischID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,6 +59,15 @@ def create_tables():
         menge INTEGER,
         FOREIGN KEY (bestellungID) REFERENCES bestellung(bestellungID),
         FOREIGN KEY (produktID) REFERENCES produkt(produktID)
+    );
+
+    CREATE TABLE IF NOT EXISTS rechnung (
+        rechnungID INTEGER PRIMARY KEY AUTOINCREMENT,
+        bestellungID INTEGER,
+        summe REAL,
+        trinkgeld REAL,
+        zeitstempel TEXT,
+        FOREIGN KEY(bestellungID) REFERENCES bestellung(bestellungID)
     );
     """)
 

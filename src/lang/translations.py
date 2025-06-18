@@ -28,9 +28,14 @@ TEXTS = {
         "in Bearbeitung": "In Bearbeitung",
         "serviert": "Serviert",
         "bezahlt": "Bezahlt",
-        "Tisch": "Tisch",
         "Plätze": "Plätze",
-        "Alkoholhaltige Getränke": "Alkoholhaltige Getränke"
+        "Alkoholhaltige Getränke": "Alkoholhaltige Getränke",
+        "Rechnung anzeigen": "Rechnung anzeigen",
+        "Keine Bestellungen": "Keine Bestellungen",
+        "Rechnungsnummer": "Rechnungsnummer",
+        "Netto": "Netto",
+        "MWST": "MWST",
+        "Gesamtbetrag": "Gesamtbetrag"
 
     },
     "fr": {
@@ -60,9 +65,14 @@ TEXTS = {
         "in Bearbeitung": "En cours",
         "serviert": "Servi",
         "bezahlt": "Payé",
-        "Tisch": "Table",
         "Plätze": "places",
-        "Alkoholhaltige Getränke": "Boissons alcoolisées"
+        "Alkoholhaltige Getränke": "Boissons alcoolisées",
+        "Rechnung anzeigen": "Afficher la facture",
+        "Keine Bestellungen": "Aucune commande",
+        "Rechnungsnummer": "Numéro de facture",
+        "Netto": "Net",
+        "MWST": "TVA",
+        "Gesamtbetrag": "Montant total"
 
     },
     "en": {
@@ -92,8 +102,14 @@ TEXTS = {
         "in Bearbeitung": "In Progress",
         "serviert": "Served",
         "bezahlt": "Paid",
-        "Tisch": "Table",
         "Plätze": "seats",
-        "Alkoholhaltige Getränke": "Alcoholic beverages"
+        "Alkoholhaltige Getränke": "Alcoholic beverages",
+        "Rechnung anzeigen": "Show bill",
+        "Keine Bestellungen": "No orders",
+        "Rechnungsnummer": "Invoice number",
+        "Netto": "Net",
+        "MWST": "VAT",
+        "Gesamtbetrag": "Total amount"
+
     }
 }

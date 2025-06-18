@@ -363,6 +363,85 @@ class Bestellung:
         cursor.execute("UPDATE bestellung SET status = ? WHERE bestellungID = ?", (neuer_status, bestellung_id))
         conn.commit()
         conn.close()
+
+    @staticmethod
+    def zeige_rechnung_fuer_tisch(frame, titel_label, texts_dict, tisch_id, sprache):
+        from tkinter import Label
+
+        # Bereich leeren
+        for widget in frame.winfo_children():
+            widget.destroy()
+
+        texts = texts_dict.get(sprache, texts_dict["de"])
+        titel_label.config(text=texts["Rechnung anzeigen"])
+
+        bestellungen = Bestellung.lade_bestellungen_fuer_tisch(tisch_id, sprache)
+        if not bestellungen:
+            Label(frame, text=texts["Keine Bestellungen"], font=("Segoe UI", 12), anchor="w").pack(anchor="w", padx=10,
+                                                                                                   pady=10)
+            return
+
+        gesamt = 0.0
+
+        for b in bestellungen:
+            Label(frame, text=f"{texts['Bestellung']} {b['id']} ({b['zeit']})", font=("Segoe UI", 10, "bold")).pack(
+                anchor="w", padx=10, pady=(10, 2))
+            for name, menge, preis in b["positionen"]:
+                teilpreis = menge * preis
+                gesamt += teilpreis
+                Label(frame, text=f"  - {menge}× {name} = {teilpreis:.2f} CHF", anchor="w").pack(anchor="w", padx=20)
+
+        Label(frame, text=f"\n💵 {texts['Gesamt']}: {gesamt:.2f} CHF", font=("Segoe UI", 11, "bold")).pack(anchor="w",
+                                                                                                          padx=10,
+                                                                                                          pady=10)
+
+    @staticmethod
+    def zeige_rechnung_fuer_bestellung(frame, titel_label, texts_dict, bestellung, sprache):
+        from tkinter import Label
+        import os
+        import sqlite3
+
+        # Bereich leeren
+        for widget in frame.winfo_children():
+            widget.destroy()
+
+        texts = texts_dict.get(sprache, texts_dict["de"])
+
+        # Prüfen ob bereits Rechnung existiert, wenn nicht: erstellen
+        daten = Rechnung.hole_rechnung(bestellung["id"])
+        if not daten:
+            Rechnung.erstelle_rechnung(bestellung)
+            daten = Rechnung.hole_rechnung(bestellung["id"])
+
+        rechnungsnummer = f"R{daten[0]:04d}"
+        zeitstempel = daten[3]
+
+        titel_label.config(text=f"{texts['Rechnung anzeigen']} #{rechnungsnummer}")
+
+        Label(frame, text=f"📋 {texts['Bestellung']} {bestellung['id']} – {zeitstempel}",
+              font=("Segoe UI", 10, "bold")).pack(anchor="w", padx=10, pady=(10, 2))
+        Label(frame, text=f"🧾 {texts['Rechnungsnummer']}: {rechnungsnummer}", font=("Segoe UI", 9)).pack(anchor="w",
+                                                                                                         padx=10)
+
+        gesamt_netto = 0.0
+        mwst_satz = 0.081
+
+        for name, menge, bruttopreis in bestellung["positionen"]:
+            gesamt_brutto = menge * bruttopreis
+            netto = gesamt_brutto / (1 + mwst_satz)
+            gesamt_netto += netto
+            Label(frame, text=f"  - {menge}× {name} = {gesamt_brutto:.2f} CHF (Netto: {netto:.2f})", anchor="w").pack(
+                anchor="w", padx=20)
+
+        mwst_betrag = gesamt_netto * mwst_satz
+        gesamt_brutto = gesamt_netto + mwst_betrag
+
+        Label(frame, text=f"{texts['Netto']}: {gesamt_netto:.2f} CHF", font=("Segoe UI", 10)).pack(anchor="e", padx=10)
+        Label(frame, text=f"{texts['MWST']} (8.1%): {mwst_betrag:.2f} CHF", font=("Segoe UI", 10)).pack(anchor="e",
+                                                                                                         padx=10)
+        Label(frame, text=f"💵 {texts['Gesamtbetrag']}: {gesamt_brutto:.2f} CHF", font=("Segoe UI", 11, "bold")).pack(
+            anchor="e", padx=10, pady=10)
+
 # -------------------------
 # 7. Klasse Bestellposition
 # -------------------------
@@ -505,4 +584,37 @@ class Warenkorb:
                 pady=5
             )
             speichern_button.grid(row=999, column=0, columnspan=3, sticky="e", padx=10, pady=10)
+
+# -------------------------
+# X. Klasse Rechnung
+# -------------------------
+
+from datetime import datetime
+import sqlite3
+from src.db import DB_PATH
+
+class Rechnung:
+    @staticmethod
+    def erstelle_rechnung(bestellung, mwst_satz=0.081, trinkgeld=0.0):
+        summe = sum(menge * preis for name, menge, preis in bestellung["positionen"])
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO rechnung (bestellungID, summe, trinkgeld, zeitstempel)
+            VALUES (?, ?, ?, ?)
+        """, (bestellung["id"], summe, trinkgeld, datetime.now()))
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def hole_rechnung(bestellung_id):
+        conn = sqlite3.connect(DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT rechnungID, summe, trinkgeld, zeitstempel
+            FROM rechnung WHERE bestellungID = ?
+        """, (bestellung_id,))
+        result = cursor.fetchone()
+        conn.close()
+        return result
 

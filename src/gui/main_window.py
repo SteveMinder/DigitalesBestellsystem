@@ -1,7 +1,8 @@
-from src.gui import styles
 import tkinter as tk
 from tkinter import messagebox
+from src.gui import styles
 from src.models.restaurant_klassen import Warenkorb, Produkt, Tisch, Bestellung
+from src.lang.translations import TEXTS
 
 warenkorb = Warenkorb()
 sprache_var = None
@@ -11,67 +12,9 @@ aktuelle_kategorieID = 1
 scrollable_frame = None
 canvas = None
 window_id = None
-
-TEXTS = {
-    "de": {
-        "Hauptgerichte": "Hauptgerichte",
-        "Getränke": "Getränke",
-        "Desserts": "Desserts",
-        "Vorspeisen": "Vorspeisen",
-        "Produkte": "Produkte",
-        "Warenkorb": "Warenkorb",
-        "Hinweis": "Hinweis",
-        "Vegetarisch": "Vegetarisch",
-        "Vegan": "Vegan",
-        "Herkunft": "Herkunft",
-        "Hinzufügen": "+ Hinzufügen",
-        "Entfernen": "Entfernen",
-        "Gesamt": "Gesamt",
-        "Tisch": "Tisch",
-        "Bestellungen": "Bestellungen"
-    },
-    "fr": {
-        "Hauptgerichte": "Plats principaux",
-        "Getränke": "Boissons",
-        "Desserts": "Desserts",
-        "Vorspeisen": "Entrées",
-        "Produkte": "Produits",
-        "Warenkorb": "Panier",
-        "Hinweis": "Remarque",
-        "Vegetarisch": "Végétarien",
-        "Vegan": "Vegan",
-        "Herkunft": "Origine",
-        "Hinzufügen": "+ Ajouter",
-        "Entfernen": "Supprimer",
-        "Gesamt": "Total",
-        "Tisch": "Table",
-        "Bestellungen": "Commandes"
-    },
-    "en": {
-        "Hauptgerichte": "Main Courses",
-        "Getränke": "Drinks",
-        "Desserts": "Desserts",
-        "Vorspeisen": "Starters",
-        "Produkte": "Products",
-        "Warenkorb": "Cart",
-        "Hinweis": "Note",
-        "Vegetarisch": "Vegetarian",
-        "Vegan": "Vegan",
-        "Herkunft": "Origin",
-        "Hinzufügen": "+ Add",
-        "Entfernen": "Remove",
-        "Gesamt": "Total",
-        "Tisch": "Table",
-        "Bestellungen": "Orders"
-    }
-}
-
-KATEGORIEN = {
-    1: "Hauptgerichte",
-    2: "Getränke",
-    3: "Desserts",
-    4: "Vorspeisen"
-}
+titel_label = None
+nav_frame = None
+bottom_buttons = []
 
 def erstelle_scroll_frame(content_frame):
     global canvas, scrollable_frame, window_id
@@ -87,7 +30,7 @@ def erstelle_scroll_frame(content_frame):
 
 def zeige_bestellungen_mit_status():
     tisch_id = tisch_mapping.get(tisch_var_str.get())
-    titel_label.config(text=tisch_var_str.get())  # Zeigt den aktuellen Tischnamen als Überschrift
+    titel_label.config(text=tisch_var_str.get())
     if not tisch_id:
         return
     for widget in scrollable_frame.winfo_children():
@@ -105,8 +48,6 @@ def zeige_bestellungen_mit_status():
 
     for i, b in enumerate(bestellungen):
         frame = tk.Frame(scrollable_frame, bg=farben.get(b['status'], "#f0f0f0"), bd=1, relief="solid")
-        frame.grid_propagate(True)
-        frame.pack_propagate(True)
         frame.grid(row=i, column=0, padx=10, pady=5, sticky="w")
 
         inner = tk.Frame(frame, bg=farben.get(b['status'], "#f0f0f0"))
@@ -130,13 +71,56 @@ def zeige_bestellungen_mit_status():
             zeige_bestellungen_mit_status()
 
         tk.Button(
-            inner, text="🔁 Status ändern", command=status_wechsel,
+            inner, text="🔁 " + texts["Status ändern"], command=status_wechsel,
             bg="#FFA500", fg="white", font=("Segoe UI", 9)
         ).pack(anchor="e", padx=5, pady=(0, 5))
 
+def erstelle_nav_buttons(sprache):
+    texts = TEXTS.get(sprache, TEXTS["de"])
+
+    for widget in nav_frame.winfo_children():
+        if isinstance(widget, tk.Button) and widget not in bottom_buttons:
+            widget.destroy()
+
+    buttons = [
+        ("Vorspeisen", 4),
+        ("Hauptgerichte", 1),
+        ("Desserts", 3),
+        ("Getränke", 2)
+    ]
+
+    for label_key, kat_id in buttons:
+        tk.Button(
+            nav_frame,
+            text=texts[label_key],
+            command=lambda k=kat_id: lade_kategorie(k),
+            **styles.STYLE_BUTTON
+        ).pack(fill="x")
+
+    for btn in bottom_buttons:
+        btn.pack_forget()
+        btn.pack(fill="x", side="bottom")
+
+def aktualisiere_bottom_buttons(sprache):
+    texts = TEXTS.get(sprache, TEXTS["de"])
+    bottom_buttons[0].config(text="📋 " + texts["Bestellungen"])
+    bottom_buttons[1].config(text="🛒 " + texts["Warenkorb"])
+    bottom_buttons[2].config(text="🗑️ " + texts["Alle Bestellungen löschen"])
+
+def sprache_gewechselt():
+    sprache = sprache_var.get()
+    erstelle_nav_buttons(sprache)
+    aktualisiere_bottom_buttons(sprache)
+    Produkt.zeige_kategorie(aktuelle_kategorieID, scrollable_frame, titel_label, TEXTS, sprache, warenkorb)
+
+def lade_kategorie(kategorieID):
+    global aktuelle_kategorieID
+    aktuelle_kategorieID = kategorieID
+    Produkt.zeige_kategorie(kategorieID, scrollable_frame, titel_label, TEXTS, sprache_var.get(), warenkorb)
 
 def start_app():
-    global sprache_var, tisch_var_str, tisch_mapping, aktuelle_kategorieID
+    global sprache_var, tisch_var_str, tisch_mapping, titel_label, nav_frame
+
     root = tk.Tk()
     root.title("Zum hungrigen Bären")
     root.geometry("1024x768")
@@ -155,13 +139,12 @@ def start_app():
     top_frame = tk.Frame(content_frame, bg=styles.FARBE_HINTERGRUND)
     top_frame.pack(fill="x", padx=10, pady=10)
 
-    global titel_label
     titel_label = tk.Label(top_frame, text="", **styles.STYLE_TITEL)
     titel_label.pack(side="left")
 
     sprache_dropdown = tk.OptionMenu(
         top_frame, sprache_var, "de", "fr", "en",
-        command=lambda _: Produkt.zeige_kategorie(aktuelle_kategorieID, scrollable_frame, titel_label, TEXTS, sprache_var.get(), warenkorb)
+        command=lambda _: sprache_gewechselt()
     )
     sprache_dropdown.config(bg="white")
     sprache_dropdown.pack(side="right")
@@ -172,23 +155,16 @@ def start_app():
 
     erstelle_scroll_frame(content_frame)
 
-    def lade_kategorie(kategorieID):
-        global aktuelle_kategorieID
-        aktuelle_kategorieID = kategorieID
-        Produkt.zeige_kategorie(kategorieID, scrollable_frame, titel_label, TEXTS, sprache_var.get(), warenkorb)
-
-    for label, kat_id in [("Vorspeisen", 4), ("Hauptgerichte", 1), ("Desserts", 3), ("Getränke", 2)]:
-        tk.Button(nav_frame, text=label, command=lambda k=kat_id: lade_kategorie(k), **styles.STYLE_BUTTON).pack(fill="x")
-
-
-    tk.Button(nav_frame, text="🗑️ Alle Bestellungen löschen", command=Bestellung.alle_bestellungen_loeschen, **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
-
-
-    tk.Button(nav_frame, text="🛒 Warenkorb", command=lambda: warenkorb.zeige_warenkorb_mit_speichern(
+    # Bottom Buttons initialisieren
+    texts = TEXTS["de"]
+    bottom_buttons.clear()
+    bottom_buttons.append(tk.Button(nav_frame, text="📋 " + texts["Bestellungen"], command=zeige_bestellungen_mit_status, **styles.STYLE_BUTTON))
+    bottom_buttons.append(tk.Button(nav_frame, text="🛒 " + texts["Warenkorb"], command=lambda: warenkorb.zeige_warenkorb_mit_speichern(
         scrollable_frame, titel_label, TEXTS, sprache_var.get(), tisch_mapping.get(tisch_var_str.get())
-    ), **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+    ), **styles.STYLE_BUTTON))
+    bottom_buttons.append(tk.Button(nav_frame, text="🗑️ " + texts["Alle Bestellungen löschen"], command=Bestellung.alle_bestellungen_loeschen, **styles.STYLE_BUTTON))
 
-    tk.Button(nav_frame, text="📋 Bestellungen anzeigen", command=zeige_bestellungen_mit_status, **styles.STYLE_BUTTON).pack(fill="x", side="bottom")
+    erstelle_nav_buttons(sprache_var.get())
 
     Produkt.zeige_kategorie(aktuelle_kategorieID, scrollable_frame, titel_label, TEXTS, sprache_var.get(), warenkorb)
     root.mainloop()

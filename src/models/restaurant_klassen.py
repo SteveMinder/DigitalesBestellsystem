@@ -474,8 +474,8 @@ class Warenkorb:
         if self.positionen:
             def bestaetige_speichern():
                 antwort = messagebox.askyesno(
-                    "Bestellung bestätigen",
-                    "Möchten Sie die Bestellung wirklich abschicken? Eine nachträgliche Änderung ist nicht möglich."
+                    TEXTS[sprache]["Bestellung speichern"],
+                    TEXTS[sprache]["Bestellung bestätigen"]
                 )
                 if antwort:
                     from .restaurant_klassen import Bestellung
@@ -485,7 +485,7 @@ class Warenkorb:
 
             speichern_button = Button(
                 scrollable_frame,
-                text="💾 Bestellung speichern",
+                text="💾 " + TEXTS[sprache]["Bestellung speichern"],
                 command=bestaetige_speichern,
                 bg="#4CAF50",
                 fg="white",

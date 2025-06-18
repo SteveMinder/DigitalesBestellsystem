@@ -53,7 +53,8 @@ def zeige_bestellungen_mit_status():
         inner = tk.Frame(frame, bg=farben.get(b['status'], "#f0f0f0"))
         inner.pack(fill="both", expand=True)
 
-        header = f"📋 Bestellung {b['id']} ({b['zeit']}, Status: {b['status']})"
+        status_wert = texts.get(b['status'], b['status'])  # z.B. "offen" → "Ouvert"
+        header = f"📋 {texts['Bestellung']} {b['id']} ({b['zeit']}, {texts['Status']}: {status_wert})"
         tk.Label(inner, text=header, font=("Segoe UI", 10, "bold"), anchor="w", bg=farben.get(b['status'], "#f0f0f0")).pack(anchor="w")
 
         bestellwert = 0.0

@@ -21,7 +21,14 @@ TEXTS = {
         "Bestellung speichern": "Bestellung speichern",
         "Bestellung bestätigen": "Möchten Sie die Bestellung wirklich abschicken? Eine nachträgliche Änderung ist nicht möglich.",
         "Alle Bestellungen löschen": "Alle Bestellungen löschen",
-        "Erledigt": "Alle Bestellungen und der Zähler wurden gelöscht."
+        "Erledigt": "Alle Bestellungen und der Zähler wurden gelöscht.",
+        "Bestellung": "Bestellung",
+        "Status": "Status",
+        "offen": "Offen",
+        "in Bearbeitung": "In Bearbeitung",
+        "serviert": "Serviert",
+        "bezahlt": "Bezahlt"
+
     },
     "fr": {
         "Hauptgerichte": "Plats principaux",
@@ -43,7 +50,14 @@ TEXTS = {
         "Bestellung speichern": "Enregistrer la commande",
         "Bestellung bestätigen": "Voulez-vous vraiment envoyer la commande ? Aucune modification ne sera possible par la suite.",
         "Alle Bestellungen löschen": "Supprimer toutes les commandes",
-        "Erledigt": "Toutes les commandes et le compteur ont été supprimés."
+        "Erledigt": "Toutes les commandes et le compteur ont été supprimés.",
+        "Bestellung": "Commande",
+        "Status": "Statut",
+        "offen": "Ouvert",
+        "in Bearbeitung": "En cours",
+        "serviert": "Servi",
+        "bezahlt": "Payé",
+
     },
     "en": {
         "Hauptgerichte": "Main Courses",
@@ -65,6 +79,12 @@ TEXTS = {
         "Bestellung speichern": "Save Order",
         "Bestellung bestätigen": "Do you really want to send the order? Changes cannot be made afterwards.",
         "Alle Bestellungen löschen": "Delete all orders",
-        "Erledigt": "All orders and the counter have been deleted."
+        "Erledigt": "All orders and the counter have been deleted.",
+        "Bestellung": "Order",
+        "Status": "Status",
+        "offen": "Open",            # en
+        "in Bearbeitung": "In Progress",
+        "serviert": "Served",
+        "bezahlt": "Paid",
     }
 }

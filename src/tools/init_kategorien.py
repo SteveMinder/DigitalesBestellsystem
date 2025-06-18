@@ -11,7 +11,8 @@ def init_kategorien():
         (1, "Hauptgerichte"),
         (2, "Getränke"),
         (3, "Desserts"),
-        (4, "Vorspeisen")
+        (4, "Vorspeisen"),
+        (5, "Alkoholhaltige Getränke")
     ]
 
     for kategorieID, bezeichnung in kategorien:

@@ -83,7 +83,8 @@ class Produkt(ABC):
             1: "Hauptgerichte",
             2: "Getränke",
             3: "Desserts",
-            4: "Vorspeisen"
+            4: "Vorspeisen",
+            5: "Alkoholhaltige Getränke"
         }
 
         titel_label.config(text=texts.get(kategorien[kategorieID], texts["Produkte"]))

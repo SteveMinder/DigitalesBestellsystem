@@ -29,7 +29,8 @@ TEXTS = {
         "serviert": "Serviert",
         "bezahlt": "Bezahlt",
         "Tisch": "Tisch",
-        "Plätze": "Plätze"
+        "Plätze": "Plätze",
+        "Alkoholhaltige Getränke": "Alkoholhaltige Getränke"
 
     },
     "fr": {
@@ -60,7 +61,8 @@ TEXTS = {
         "serviert": "Servi",
         "bezahlt": "Payé",
         "Tisch": "Table",
-        "Plätze": "places"
+        "Plätze": "places",
+        "Alkoholhaltige Getränke": "Boissons alcoolisées"
 
     },
     "en": {
@@ -91,6 +93,7 @@ TEXTS = {
         "serviert": "Served",
         "bezahlt": "Paid",
         "Tisch": "Table",
-        "Plätze": "seats"
+        "Plätze": "seats",
+        "Alkoholhaltige Getränke": "Alcoholic beverages"
     }
 }

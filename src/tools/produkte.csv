@@ -1,41 +1,51 @@
 name,beschreibung,name_fr,beschreibung_fr,name_en,beschreibung_en,preis,typ,groesse,vegetarisch,vegan,herkunft,kategorieID
-Bruschetta,Geröstetes Brot mit Tomaten und Basilikum,Bruschetta,Pain grillé aux tomates et au basilic,Bruschetta,Toasted bread with tomatoes and basil,4.5,Speise,,1,1,,4
-Caprese,Mozzarella mit Tomaten und Basilikum,Caprese,Mozzarella tomates et basilic,Caprese,Mozzarella with tomatoes and basil,5.5,Speise,,1,0,,4
-Rinds-Carpaccio,Dünn geschnittenes Rindfleisch mit Parmesan,Carpaccio de bœuf,Viande de bœuf finement tranchée avec parmesan,Beef Carpaccio,Thinly sliced beef with Parmesan,7.8,Speise,,0,0,CH,4
-Kleiner gemischter Salat,Blattsalat mit Karotten und Gurken,Petite salade mixte,Salade verte avec carottes et concombres,Small mixed salad,Leaf salad with carrots and cucumbers,4.0,Speise,,1,1,,4
-Kürbissuppe,Cremige Suppe mit gerösteten Kernen,Soupe de potiron,Velouté crémeux aux graines grillées,Pumpkin soup,Creamy soup with roasted seeds,5.2,Speise,,1,1,,4
-Tomatensuppe,Mit Basilikum und Creme fraiche,Soupe de tomates,Servie avec basilic et crème fraîche,Tomato soup,With basil and crème fraîche,4.8,Speise,,1,0,,4
-Gefüllte Champignons,Mit Frischkäse überbacken,Champignons farcis,Champignons gratinés au fromage frais,Stuffed mushrooms,Mushrooms topped with cream cheese,5.9,Speise,,1,0,,4
-Bunter Antipasti-Teller,Grillgemüse mit Oliven,Assiette d'antipasti colorée,Légumes grillés et olives,Colorful antipasti platter,Grilled vegetables with olives,6.5,Speise,,1,1,,4
-Mini-Frühlingsrollen,Mit Gemüsefuellung und Dip,Mini-rolls de printemps,Rouleaux de printemps aux légumes avec sauce,Mini spring rolls,With vegetable filling and dip,4.4,Speise,,1,1,,4
-Räucherlachs auf Toast,Mit Dillsauce,Saumon fumé sur toast,Saumon fumé sur toast avec sauce à l'aneth,Smoked salmon on toast,With dill sauce,6.9,Speise,,0,0,NO,4
-Spaghetti Bolognese,Nudeln mit Rindfleischsauce,Spaghetti Bolognaise,Spaghetti à la sauce bolognaise,Spaghetti Bolognese,Pasta with beef sauce,9.5,Speise,,0,0,CH,1
-Veganes Gulasch,Herzhaftes Ragout auf Pflanzenbasis,Gulasch végétalien,Ragoût savoureux à base de plantes,Vegan goulash,Hearty plant-based stew,8.9,Speise,,1,1,,1
-Linsensuppe,Herzhaft mit Karotten und Sellerie,Soupe aux lentilles,Soupe riche en lentilles et légumes,Lentil soup,Hearty lentil soup with carrots and celery,5.9,Speise,,1,1,,1
-Pouletbrust, auf saisonalem Gemüse,Blanc de poulet,Poulet grillé sur légumes de saison,Chicken breast,Grilled on seasonal vegetables,11.5,Speise,,0,0,CH,1
-Rahmschnitzel,Schweinefilet in Pilzrahmsauce,Schnitzel à la crème,Filet de porc avec sauce aux champignons,Cream schnitzel,Pork fillet in creamy mushroom sauce,12.8,Speise,,0,0,CH,1
-Gemüselasagne,"Mit Zucchini, Spinat und Bechamelsauce",Lasagne de légumes,"Lasagne aux courgettes, épinards et sauce béchamel",Vegetable lasagna,"With zucchini, spinach and béchamel sauce",9.2,Speise,,1,0,,1
-Ratatouille,Provenzalischer Gemüseeintopf,Ratatouille,Ragoût provençal de légumes,Ratatouille,Provençal vegetable stew,8.5,Speise,,1,1,,1
-Schweizer Rösti,Mit Spiegelei und Käse,Rösti suisse,Rösti suisse avec œuf au plat et fromage,Swiss rösti,With fried egg and cheese,7.8,Speise,,1,0,CH,1
-Curry mit Reis,"Indisch, mit Kokosmilch und Gemüse",Curry au riz,Curry indien au lait de coco et légumes,Curry with rice,"Indian-style with coconut milk and vegetables",9.9,Speise,,1,1,,1
-Fischfilet gebraten,Mit Zitronensauce und Kartoffeln,Filet de poisson poêlé,Filet de poisson poêlé avec sauce citron et pommes de terre,Pan-fried fish fillet,With lemon sauce and potatoes,10.4,Speise,,0,0,NO,1
-Tiramisu,Italienisches Dessert mit Mascarpone,Tiramisu,Tiramisu italien au mascarpone,Tiramisu,Italian dessert with mascarpone,4.0,Speise,,0,0,,3
-Mousse au Chocolat,Schokoladendessert mit Rahm,Mousse au chocolat,Dessert au chocolat avec crème,Mousse au chocolat,Chocolate dessert with cream,3.9,Speise,,0,0,,3
-Obstsalat,Frische Früchte der Saison,Salade de fruits,Salade de fruits frais de saison,Fruit salad,Fresh seasonal fruit,3.5,Speise,,1,1,,3
-Schwarzwälder Kirschtorte,"Mit Sahne, Kirschen und Schokolade",Gâteau Forêt-Noire,"Gâteau avec crème, cerises et chocolat",Black Forest cake,"With cream, cherries and chocolate",4.5,Speise,,0,0,,3
-Vanillepudding,Mit frischer Vanillesauce,Pudding à la vanille,Pudding avec sauce à la vanille fraîche,Vanilla pudding,With fresh vanilla sauce,3.2,Speise,,1,0,,3
-Creme brulee,Mit karamellisierter Zuckerschicht,Crème brûlée,Crème brûlée avec croûte de sucre caramélisé,Crème brûlée,With caramelized sugar crust,4.0,Speise,,1,0,,3
-Brownie,Mit Walnüssen und Schokosauce,Brownie au chocolat,Brownie au chocolat avec noix et sauce chocolat,Brownie,With walnuts and chocolate sauce,3.7,Speise,,0,0,,3
-Sorbet Trio,"Zitrone, Himbeere, Mango",Sorbet trio,"Sorbet trio citron, framboise, mangue",Sorbet trio,"Lemon, raspberry, mango",3.9,Speise,,1,1,,3
-Käseplatte,Verschiedene Kaesesorten mit Trauben,Plateau de fromages,Assortiment de fromages avec raisins,Cheese platter,Various cheeses with grapes,5.0,Speise,,1,0,CH,3
-Panna Cotta,Mit Beerensauce,Panna cotta,Crème cuite avec sauce aux baies,Panna cotta,With berry sauce,4.1,Speise,,1,0,,3
-Cola 0.5l,Erfrischendes Getränk mit Kohlensaeure,Cola 0.5l,Boisson gazeuse rafraîchissante,Cola 0.5l,Refreshing carbonated drink,2.5,Getränk,0.5l,1,1,,2
-Apfelschorle 0.5l,Erfrischendes Mischgetraenk,Apfelschorle 0.5l,Boisson rafraîchissante à base de jus de pomme,Apfelschorle 0.5l,Refreshing apple spritzer,2.6,Getränk,0.5l,1,1,,2
-Eistee Zitrone 0.5l,"Hausgemacht, leicht gesüsst",Thé glacé citron 0.5l,Thé glacé fait maison légèrement sucré,Lemon iced tea 0.5l,Homemade lightly sweetened iced tea,2.4,Getränk,0.5l,1,1,,2
-Kräutertee 0.3l,Beruhigend und wohltuend,Thé aux herbes 0.3l,Thé apaisant et bénéfique,Herbal tea 0.3l,Calming and beneficial tea,2.2,Getränk,0.3l,1,1,,2
-Espresso,Kleiner schwarzer Kaffee,Espresso,Petit café noir,Espresso,Small black coffee,2.0,Getränk,0.1l,1,1,,2
-Mineralwasser still 0.5l,Ohne Kohlensäure,Eau minérale plate 0.5l,Eau minérale sans gaz,Still mineral water 0.5l,No carbonation,2.0,Getränk,0.5l,1,1,,2
-Mineralwasser mit Kohlensäure 0.5l,Erfrischend prickelnd,Eau minérale gazeuse 0.5l,Eau minérale pétillante,Sparkling mineral water 0.5l,Refreshing and fizzy,2.0,Getränk,0.5l,1,1,,2
-Orangensaft 0.3l,Frisch gepresst,Jus d'orange 0.3l,Jus d'orange pressé à la main,Orange juice 0.3l,Freshly squeezed,2.8,Getränk,0.3l,1,1,,2
-Latte Macchiato,Mit aufgeschäumter Milch,Latte macchiato,Au lait mousseux,Latte macchiato,With frothed milk,3.2,Getränk,0.3l,1,0,,2
-Cappuccino,Mit Milchschaum,Cappuccino,Avec mousse de lait,Cappuccino,With milk foam,2.9,Getränk,0.25l,1,0,,2
+Bruschetta,Geröstetes Brot mit Tomaten und Basilikum,Bruschetta,Pain grillé aux tomates et au basilic,Bruschetta,Toasted bread with tomatoes and basil,6.5,Speise,,1,1,,4
+Caprese,Mozzarella mit Tomaten und Basilikum,Caprese,Mozzarella tomates et basilic,Caprese,Mozzarella with tomatoes and basil,8.5,Speise,,1,0,,4
+Rinds-Carpaccio,Dünn geschnittenes Rindfleisch mit Parmesan,Carpaccio de bœuf,Viande de bœuf finement tranchée avec parmesan,Beef Carpaccio,Thinly sliced beef with Parmesan,14.5,Speise,,0,0,CH,4
+Kleiner gemischter Salat,Blattsalat mit Karotten und Gurken,Petite salade mixte,Salade verte avec carottes et concombres,Small mixed salad,Leaf salad with carrots and cucumbers,6.5,Speise,,1,1,,4
+Kürbissuppe,Cremige Suppe mit gerösteten Kernen,Soupe de potiron,Velouté crémeux aux graines grillées,Pumpkin soup,Creamy soup with roasted seeds,7.5,Speise,,1,1,,4
+Tomatensuppe,Mit Basilikum und Creme fraiche,Soupe de tomates,Servie avec basilic et crème fraîche,Tomato soup,With basil and crème fraîche,6.5,Speise,,1,0,,4
+Gefüllte Champignons,Mit Frischkäse überbacken,Champignons farcis,Champignons gratinés au fromage frais,Stuffed mushrooms,Mushrooms topped with cream cheese,8.5,Speise,,1,0,,4
+Bunter Antipasti-Teller,Grillgemüse mit Oliven,Assiette d'antipasti colorée,Légumes grillés et olives,Colorful antipasti platter,Grilled vegetables with olives,10.5,Speise,,1,1,,4
+Mini-Frühlingsrollen,Mit Gemüsefuellung und Dip,Mini-rolls de printemps,Rouleaux de printemps aux légumes avec sauce,Mini spring rolls,With vegetable filling and dip,7.5,Speise,,1,1,,4
+Räucherlachs auf Toast,Mit Dillsauce,Saumon fumé sur toast,Saumon fumé sur toast avec sauce à l'aneth,Smoked salmon on toast,With dill sauce,11.5,Speise,,0,0,NO,4
+Spaghetti Bolognese,Nudeln mit Rindfleischsauce,Spaghetti Bolognaise,Spaghetti à la sauce bolognaise,Spaghetti Bolognese,Pasta with beef sauce,18.5,Speise,,0,0,CH,1
+Veganes Gulasch,Herzhaftes Ragout auf Pflanzenbasis,Gulasch végétalien,Ragoût savoureux à base de plantes,Vegan goulash,Hearty plant-based stew,19.5,Speise,,1,1,,1
+Linsensuppe,Herzhaft mit Karotten und Sellerie,Soupe aux lentilles,Soupe riche en lentilles et légumes,Lentil soup,Hearty lentil soup with carrots and celery,8.5,Speise,,1,1,,1
+Pouletbrust, auf saisonalem Gemüse,Blanc de poulet,Poulet grillé sur légumes de saison,Chicken breast,Grilled on seasonal vegetables,24.5,Speise,,0,0,CH,1
+Rahmschnitzel,Schweinefilet in Pilzrahmsauce,Schnitzel à la crème,Filet de porc avec sauce aux champignons,Cream schnitzel,Pork fillet in creamy mushroom sauce,25.5,Speise,,0,0,CH,1
+Gemüselasagne,"Mit Zucchini, Spinat und Bechamelsauce",Lasagne de légumes,"Lasagne aux courgettes, épinards et sauce béchamel",Vegetable lasagna,"With zucchini, spinach and béchamel sauce",17.5,Speise,,1,0,,1
+Ratatouille,Provenzalischer Gemüseeintopf,Ratatouille,Ragoût provençal de légumes,Ratatouille,Provençal vegetable stew,17.5,Speise,,1,1,,1
+Schweizer Rösti,Mit Spiegelei und Käse,Rösti suisse,Rösti suisse avec œuf au plat et fromage,Swiss rösti,With fried egg and cheese,18.5,Speise,,1,0,CH,1
+Curry mit Reis,"Indisch, mit Kokosmilch und Gemüse",Curry au riz,Curry indien au lait de coco et légumes,Curry with rice,"Indian-style with coconut milk and vegetables",19.5,Speise,,1,1,,1
+Fischfilet gebraten,Mit Zitronensauce und Kartoffeln,Filet de poisson poêlé,Filet de poisson poêlé avec sauce citron et pommes de terre,Pan-fried fish fillet,With lemon sauce and potatoes,24.5,Speise,,0,0,NO,1
+Tiramisu,Italienisches Dessert mit Mascarpone,Tiramisu,Tiramisu italien au mascarpone,Tiramisu,Italian dessert with mascarpone,8.0,Speise,,0,0,,3
+Mousse au Chocolat,Schokoladendessert mit Rahm,Mousse au chocolat,Dessert au chocolat avec crème,Mousse au chocolat,Chocolate dessert with cream,7.5,Speise,,0,0,,3
+Obstsalat,Frische Früchte der Saison,Salade de fruits,Salade de fruits frais de saison,Fruit salad,Fresh seasonal fruit,6.0,Speise,,1,1,,3
+Schwarzwälder Kirschtorte,"Mit Sahne, Kirschen und Schokolade",Gâteau Forêt-Noire,"Gâteau avec crème, cerises et chocolat",Black Forest cake,"With cream, cherries and chocolate",8.5,Speise,,0,0,,3
+Vanillepudding,Mit frischer Vanillesauce,Pudding à la vanille,Pudding avec sauce à la vanille fraîche,Vanilla pudding,With fresh vanilla sauce,7.5,Speise,,1,0,,3
+Creme brulee,Mit karamellisierter Zuckerschicht,Crème brûlée,Crème brûlée avec croûte de sucre caramélisé,Crème brûlée,With caramelized sugar crust,8.0,Speise,,1,0,,3
+Brownie,Mit Walnüssen und Schokosauce,Brownie au chocolat,Brownie au chocolat avec noix et sauce chocolat,Brownie,With walnuts and chocolate sauce,7.0,Speise,,0,0,,3
+Sorbet Trio,"Zitrone, Himbeere, Mango",Sorbet trio,"Sorbet trio citron, framboise, mangue",Sorbet trio,"Lemon, raspberry, mango",8.5,Speise,,1,1,,3
+Käseplatte,Verschiedene Kaesesorten mit Trauben,Plateau de fromages,Assortiment de fromages avec raisins,Cheese platter,Various cheeses with grapes,10.5,Speise,,1,0,CH,3
+Panna Cotta,Mit Beerensauce,Panna cotta,Crème cuite avec sauce aux baies,Panna cotta,With berry sauce,8.5,Speise,,1,0,,3
+Cola 0.5l,Erfrischendes Getränk mit Kohlensaeure,Cola 0.5l,Boisson gazeuse rafraîchissante,Cola 0.5l,Refreshing carbonated drink,4.5,Getränk,0.5l,1,1,,2
+Apfelschorle 0.5l,Erfrischendes Mischgetraenk,Apfelschorle 0.5l,Boisson rafraîchissante à base de jus de pomme,Apfelschorle 0.5l,Refreshing apple spritzer,4.5,Getränk,0.5l,1,1,,2
+Eistee Zitrone 0.5l,"Hausgemacht, leicht gesüsst",Thé glacé citron 0.5l,Thé glacé fait maison légèrement sucré,Lemon iced tea 0.5l,Homemade lightly sweetened iced tea,4.5,Getränk,0.5l,1,1,,2
+Kräutertee 0.3l,Beruhigend und wohltuend,Thé aux herbes 0.3l,Thé apaisant et bénéfique,Herbal tea 0.3l,Calming and beneficial tea,4.0,Getränk,0.3l,1,1,,2
+Espresso,Kleiner schwarzer Kaffee,Espresso,Petit café noir,Espresso,Small black coffee,4.0,Getränk,0.1l,1,1,,2
+Mineralwasser still 0.5l,Ohne Kohlensäure,Eau minérale plate 0.5l,Eau minérale sans gaz,Still mineral water 0.5l,No carbonation,4.0,Getränk,0.5l,1,1,,2
+Mineralwasser mit Kohlensäure 0.5l,Erfrischend prickelnd,Eau minérale gazeuse 0.5l,Eau minérale pétillante,Sparkling mineral water 0.5l,Refreshing and fizzy,4.0,Getränk,0.5l,1,1,,2
+Orangensaft 0.3l,Frisch gepresst,Jus d'orange 0.3l,Jus d'orange pressé à la main,Orange juice 0.3l,Freshly squeezed,4.5,Getränk,0.3l,1,1,,2
+Latte Macchiato,Mit aufgeschäumter Milch,Latte macchiato,Au lait mousseux,Latte macchiato,With frothed milk,4.5,Getränk,0.3l,1,0,,2
+Cappuccino,Mit Milchschaum,Cappuccino,Avec mousse de lait,Cappuccino,With milk foam,4.5,Getränk,0.25l,1,0,,2
+Bier vom Fass 0.5l,Frisch gezapftes Lagerbier,Bière pression 0.5l,Bière blonde fraîchement tirée,Draught beer 0.5l,Freshly tapped lager,6.5,Getränk,0.5l,0,0,,5
+Weisswein 0.2l,Fruchtiger trockener Weisswein,Vin blanc 0.2l,Vin blanc sec et fruité,White wine 0.2l,Fruity dry white wine,8.5,Getränk,0.2l,0,0,,5
+Rotwein 0.2l,Kräftiger Rotwein mit feiner Note,Vin rouge 0.2l,Vin rouge corsé avec une note fine,Red wine 0.2l,Strong red wine with fine aroma,8.5,Getränk,0.2l,0,0,,5
+Roséwein 0.2l,Leichter Sommerwein,Vin rosé 0.2l,Vin rosé léger d'été,Rosé wine 0.2l,Light summer wine,8.0,Getränk,0.2l,0,0,,5
+Aperol Spritz 0.3l,Aperitif mit Prosecco und Soda,Aperol Spritz 0.3l,Apéritif au Prosecco et soda,Aperol Spritz 0.3l,Aperitif with prosecco and soda,9.0,Getränk,0.3l,0,0,,5
+Weissbier 0.5l,Hefetrübes Weizenbier,Bière blanche 0.5l,Bière de blé non filtrée,Wheat beer 0.5l,Unfiltered wheat beer,6.5,Getränk,0.5l,0,0,,5
+Radler 0.5l,Bier gemischt mit Zitronenlimonade,Panaché 0.5l,Bière mélangée à la limonade au citron,Shandy 0.5l,Beer mixed with lemon soda,6.0,Getränk,0.5l,0,0,,5
+Prosecco 0.1l,Italienischer Perlwein,Prosecco 0.1l,Vin pétillant italien,Prosecco 0.1l,Italian sparkling wine,7.5,Getränk,0.1l,0,0,,5
+Gin Tonic 0.3l,Gin mit Tonic und Limette,Gin Tonic 0.3l,Gin avec tonic et citron vert,Gin Tonic 0.3l,Gin with tonic and lime,9.5,Getränk,0.3l,0,0,,5
+Cider 0.5l,Apfelwein leicht prickelnd,Cidre 0.5l,Cidre légèrement pétillant,Cider 0.5l,Lightly sparkling apple wine,6.0,Getränk,0.5l,0,0,,5

@@ -88,7 +88,8 @@ def erstelle_nav_buttons(sprache):
         ("Vorspeisen", 4),
         ("Hauptgerichte", 1),
         ("Desserts", 3),
-        ("Getränke", 2)
+        ("Getränke", 2),
+        ("Alkoholhaltige Getränke", 5)
     ]
 
     for label_key, kat_id in buttons:

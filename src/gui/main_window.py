@@ -7,6 +7,7 @@ from src.lang.translations import TEXTS
 warenkorb = Warenkorb()
 sprache_var = None
 tisch_var_str = None
+tisch_dropdown = None
 tisch_mapping = {}
 aktuelle_kategorieID = 1
 scrollable_frame = None
@@ -37,7 +38,7 @@ def zeige_bestellungen_mit_status():
         widget.destroy()
 
     texts = TEXTS.get(sprache_var.get(), TEXTS["de"])
-    bestellungen = Bestellung.lade_bestellungen_fuer_tisch(tisch_id)
+    bestellungen = Bestellung.lade_bestellungen_fuer_tisch(tisch_id, sprache_var.get())
 
     farben = {
         "offen": "#FFB347",
@@ -110,9 +111,30 @@ def aktualisiere_bottom_buttons(sprache):
 
 def sprache_gewechselt():
     sprache = sprache_var.get()
+
+    # Navigation & Footer aktualisieren
     erstelle_nav_buttons(sprache)
     aktualisiere_bottom_buttons(sprache)
+
+    # Tischnamen + Mapping neu laden
+    neue_anzeigen, neue_mapping = Tisch.lade_anzeigen(sprache)
+    global tisch_mapping
+    tisch_mapping.clear()
+    tisch_mapping.update(neue_mapping)
+
+    # Dropdown-Einträge ersetzen
+    menu = tisch_dropdown["menu"]
+    menu.delete(0, "end")
+    for eintrag in neue_anzeigen:
+        menu.add_command(label=eintrag, command=lambda value=eintrag: tisch_var_str.set(value))
+
+    # Auswahl beibehalten oder fallback
+    if tisch_var_str.get() not in neue_anzeigen:
+        tisch_var_str.set(neue_anzeigen[0] if neue_anzeigen else "")
+
+    # Kategorieanzeige aktualisieren
     Produkt.zeige_kategorie(aktuelle_kategorieID, scrollable_frame, titel_label, TEXTS, sprache, warenkorb)
+
 
 def lade_kategorie(kategorieID):
     global aktuelle_kategorieID
@@ -128,7 +150,7 @@ def start_app():
     root.configure(bg=styles.FARBE_HINTERGRUND)
 
     sprache_var = tk.StringVar(value="de")
-    anzeigen, tisch_mapping = Tisch.lade_anzeigen()
+    anzeigen, tisch_mapping = Tisch.lade_anzeigen(sprache_var.get())
     tisch_var_str = tk.StringVar(value=anzeigen[0] if anzeigen else "")
 
     nav_frame = tk.Frame(root, width=200, bg=styles.FARBE_KATEGORIE)
@@ -150,6 +172,7 @@ def start_app():
     sprache_dropdown.config(bg="white")
     sprache_dropdown.pack(side="right")
 
+    global tisch_dropdown
     tisch_dropdown = tk.OptionMenu(top_frame, tisch_var_str, *anzeigen)
     tisch_dropdown.config(bg="white")
     tisch_dropdown.pack(side="right", padx=10)

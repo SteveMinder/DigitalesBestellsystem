@@ -4,6 +4,7 @@ import sqlite3
 from src.db import DB_PATH
 from tkinter import messagebox
 from tkinter import Frame, Label
+from src.lang.translations import TEXTS
 
 # -------------------------
 # 1. Abstrakte Klasse Produkt
@@ -185,14 +186,16 @@ class Tisch:
         self.clusterID = clusterID
 
     @staticmethod
-    def lade_anzeigen():
+    def lade_anzeigen(sprache="de"):
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("SELECT tischID, sitzplaetze FROM tisch ORDER BY tischID")
         daten = cursor.fetchall()
         conn.close()
-        anzeigen = [f"Tisch {tid} ({plaetze} Plätze)" for tid, plaetze in daten]
-        id_map = {f"Tisch {tid} ({plaetze} Plätze)": tid for tid, plaetze in daten}
+        texts = TEXTS.get(sprache, TEXTS["de"])
+        anzeigen = [f"{texts['Tisch']} {tid} ({plaetze} {texts['Plätze']})" for tid, plaetze in daten]
+        id_map = {f"{texts['Tisch']} {tid} ({plaetze} {texts['Plätze']})": tid for tid, plaetze in daten}
+
         return anzeigen, id_map
 
 # -------------------------
@@ -300,7 +303,7 @@ class Bestellung:
         warenkorb.leeren()
 
     @staticmethod
-    def lade_bestellungen_fuer_tisch(tisch_id):
+    def lade_bestellungen_fuer_tisch(tisch_id, sprache="de"):
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("""
@@ -312,8 +315,15 @@ class Bestellung:
         bestellungen = cursor.fetchall()
         result = []
         for bestellung_id, zeit, status in bestellungen:
-            cursor.execute("""
-                SELECT p.name, bp.menge, p.preis
+            # Sprachabhängige Spaltennamen
+            name_spalte = {
+                "de": "name",
+                "fr": "name_fr",
+                "en": "name_en"
+            }.get(sprache, "name")
+
+            cursor.execute(f"""
+                SELECT p.{name_spalte}, bp.menge, p.preis
                 FROM bestellposition bp
                 JOIN produkt p ON bp.produktID = p.produktID
                 WHERE bp.bestellungID = ?

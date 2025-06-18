@@ -27,7 +27,9 @@ TEXTS = {
         "offen": "Offen",
         "in Bearbeitung": "In Bearbeitung",
         "serviert": "Serviert",
-        "bezahlt": "Bezahlt"
+        "bezahlt": "Bezahlt",
+        "Tisch": "Tisch",
+        "Plätze": "Plätze"
 
     },
     "fr": {
@@ -57,6 +59,8 @@ TEXTS = {
         "in Bearbeitung": "En cours",
         "serviert": "Servi",
         "bezahlt": "Payé",
+        "Tisch": "Table",
+        "Plätze": "places"
 
     },
     "en": {
@@ -86,5 +90,7 @@ TEXTS = {
         "in Bearbeitung": "In Progress",
         "serviert": "Served",
         "bezahlt": "Paid",
+        "Tisch": "Table",
+        "Plätze": "seats"
     }
 }

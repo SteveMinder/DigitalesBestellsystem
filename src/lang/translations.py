@@ -34,6 +34,7 @@ TEXTS = {
         "Netto": "Netto",
         "MWST": "MWST",
         "Plätze": "Plätze",
+        "Grösse": "Grösse",
 
         # Bestellung
         "Tisch": "Tisch",
@@ -80,6 +81,7 @@ TEXTS = {
         "Netto": "Net",
         "MWST": "TVA",
         "Plätze": "places",
+        "Grösse": "Taille",
 
         # Bestellungen
         "Tisch": "Table",
@@ -126,6 +128,7 @@ TEXTS = {
         "Netto": "Net",
         "MWST": "VAT",
         "Plätze": "seats",
+        "Grösse": "Size",
 
         # Orders
         "Tisch": "Table",

@@ -554,20 +554,36 @@ class Warenkorb:
             row = i // spalten
             col = i % spalten
 
-            frame = Frame(scrollable_frame, width=260, height=110, bg="#ffffff", bd=1, relief="solid",
+            frame = Frame(scrollable_frame, width=260, height=130, bg="#ffffff", bd=1, relief="solid",
                           highlightbackground="#dddddd", highlightthickness=1)
             frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
             frame.grid_propagate(False)
 
+            # Name & Menge
             Label(frame, text=f"{pos.menge}× {pos.produkt.name}", font=("Segoe UI", 10, "bold"), anchor="w").pack(
                 anchor="w", pady=(0, 2), padx=6)
+
+            # Beschreibung
+            if pos.produkt.beschreibung:
+                Label(frame, text=pos.produkt.beschreibung, font=("Segoe UI", 9, "italic"), anchor="w", fg="gray").pack(
+                    anchor="w", pady=(0, 2), padx=6)
+
+            # Grösse bei Getränken
+            if hasattr(pos.produkt, "groesse") and pos.produkt.groesse:
+                Label(frame, text=f"{texts['Grösse']}: {pos.produkt.groesse}l", font=("Segoe UI", 9), anchor="w",
+                      fg="gray").pack(
+                    anchor="w", pady=(0, 2), padx=6)
+
+            # Preis
             Label(frame, text=f"{pos.teilpreis():.2f} CHF", font=("Segoe UI", 10, "italic"), anchor="w").pack(
                 anchor="w", pady=(0, 4), padx=6)
 
+            # Entfernen-Button
             Button(
                 frame,
                 text="🗑️ Entfernen",
-                command=lambda p=pos.produkt: (self.loeschen(p), self.zeige_warenkorb_mit_speichern(scrollable_frame, titel_label, TEXTS,sprache, tisch_id)),
+                command=lambda p=pos.produkt: (self.loeschen(p), self.zeige_warenkorb_mit_speichern(
+                    scrollable_frame, titel_label, TEXTS, sprache, tisch_id)),
                 bg="#d62828",
                 fg="white",
                 font=("Segoe UI", 9),
@@ -575,6 +591,7 @@ class Warenkorb:
                 pady=2
             ).pack(anchor="se", pady=6, padx=12)
 
+        # Gesamtsumme
         total_row = (len(self.positionen) - 1) // spalten + 1
         Label(scrollable_frame, text=f"{texts['Gesamt']}: {self.gesamtpreis():.2f} CHF",
               font=("Segoe UI", 10, "bold")).grid(

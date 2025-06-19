@@ -349,12 +349,17 @@ class Bestellung:
             }.get(sprache, "name")
 
             cursor.execute(f"""
-                SELECT p.{name_spalte}, bp.menge, p.preis
+                SELECT p.{name_spalte}, p.typ, p.groesse, bp.menge, p.preis
                 FROM bestellposition bp
                 JOIN produkt p ON bp.produktID = p.produktID
                 WHERE bp.bestellungID = ?
             """, (bestellung_id,))
-            positionen = cursor.fetchall()
+            positionen = []
+            for name, typ, groesse, menge, preis in cursor.fetchall():
+                if typ == "Getränk" and groesse:
+                    name += f" ({groesse}l)"
+                positionen.append((name, menge, preis))
+
             result.append({
                 "id": bestellung_id,
                 "zeit": zeit,

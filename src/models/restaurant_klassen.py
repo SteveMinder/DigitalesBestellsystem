@@ -5,6 +5,7 @@ from src.db import DB_PATH
 from tkinter import messagebox
 from tkinter import Frame, Label
 from src.lang.translations import TEXTS
+from tkinter import StringVar, OptionMenu
 from src.gui import styles
 
 # -------------------------
@@ -69,12 +70,11 @@ class Produkt(ABC):
 
     @staticmethod
     def zeige_kategorie(kategorieID, scrollable_frame, titel_label, TEXTS, sprache, warenkorb):
-        from tkinter import Frame, Label, Button
+        from tkinter import Frame, Label, Button, StringVar, OptionMenu
         from src.gui import styles
-        from src.models.restaurant_klassen import Produkt
+        from src.models.restaurant_klassen import Produkt, Getraenk
 
         texts = TEXTS.get(sprache, TEXTS["de"])
-
         scrollable_frame.configure(bg="#f8f8f8")
 
         for widget in scrollable_frame.winfo_children():
@@ -89,16 +89,30 @@ class Produkt(ABC):
         }
 
         titel_label.config(text=texts.get(kategorien[kategorieID], texts["Produkte"]))
-
         produkte = Produkt.lade_alle_aus_db(kategorieID, sprache)
+
+        gruppiert = {}
+        for p in produkte:
+            if isinstance(p, Getraenk):
+                key = (p.name, p.beschreibung)
+            else:
+                key = (p.name, p.beschreibung, p.produktID)
+            gruppiert.setdefault(key, []).append(p)
+
         scrollable_frame.update_idletasks()
         scrollable_width = scrollable_frame.winfo_width() or scrollable_frame.winfo_reqwidth()
         kachel_breite = 300
         spalten = max(2, scrollable_width // kachel_breite)
 
-        for index, produkt in enumerate(produkte):
+        def normalize_groesse(g):
+            return str(g).lower().replace("l", "").strip()
+
+        for index, (key, varianten) in enumerate(gruppiert.items()):
             row = index // spalten
             col = index % spalten
+            produkt = varianten[0]
+            name = produkt.name
+            beschreibung = produkt.beschreibung
 
             frame = Frame(
                 scrollable_frame,
@@ -112,27 +126,37 @@ class Produkt(ABC):
             )
             frame.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
             frame.grid_propagate(False)
-
             scrollable_frame.grid_columnconfigure(col, weight=1)
 
-            # Innerer Container für Inhalte
             inner = Frame(frame, bg="#ffffff")
             inner.pack(fill="both", expand=True)
 
-            Label(inner, text=produkt.name, wraplength=260, justify="left", **styles.STYLE_PRODUKTNAME).pack(anchor="w",
-                                                                                                             pady=(
-                                                                                                             0, 2))
-            Label(inner, text=produkt.beschreibung, wraplength=260, justify="left", **styles.STYLE_BESCHREIBUNG).pack(
+            Label(inner, text=name, wraplength=260, justify="left", **styles.STYLE_PRODUKTNAME).pack(anchor="w",
+                                                                                                     pady=(0, 2))
+            Label(inner, text=beschreibung, wraplength=260, justify="left", **styles.STYLE_BESCHREIBUNG).pack(
                 anchor="w")
-            Label(inner, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="se", padx=12)
 
-            Button(
-                inner,
-                text=texts["Hinzufügen"],
-                command=lambda p=produkt: warenkorb.hinzufuegen(p, 1),
-                bg=styles.FARBE_PRIMÄR,
-                fg="white"
-            ).pack(anchor="se", side="bottom", pady=6, padx=12)
+            if isinstance(produkt, Getraenk) and len(varianten) > 1:
+                var = StringVar(value=f"{varianten[0].groesse}l")
+                optionen = [f"{v.groesse}l ({v.preis:.2f} CHF)" for v in varianten]
+
+                def hinzufuegen_auswahl(vs=varianten, sel_var=var):
+                    ausgewaehlt = normalize_groesse(sel_var.get().split("l")[0])
+                    match = next((v for v in vs if normalize_groesse(v.groesse) == ausgewaehlt), vs[0])
+                    warenkorb.hinzufuegen(match, 1)
+
+                auswahl_frame = Frame(inner, bg="#ffffff")
+                auswahl_frame.pack(anchor="se", pady=6, padx=12, fill="x")
+
+                OptionMenu(auswahl_frame, var, *optionen).pack(side="left", padx=(0, 8))
+                Button(auswahl_frame, text=texts["Hinzufügen"], command=hinzufuegen_auswahl,
+                       bg=styles.FARBE_PRIMÄR, fg="white").pack(side="right")
+            else:
+                Label(inner, text=f"{produkt.preis:.2f} CHF", **styles.STYLE_PREIS).pack(anchor="se", padx=12)
+                Button(inner, text=texts["Hinzufügen"],
+                       command=lambda p=produkt: warenkorb.hinzufuegen(p, 1),
+                       bg=styles.FARBE_PRIMÄR, fg="white").pack(anchor="se", pady=6, padx=12)
+
 
 # -------------------------
 # 2. Subklasse Speise

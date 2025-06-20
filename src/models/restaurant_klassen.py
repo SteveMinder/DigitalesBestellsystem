@@ -117,7 +117,7 @@ class Produkt(ABC):
             frame = Frame(
                 scrollable_frame,
                 width=280,
-                height=150,
+                height=170,
                 bg="#ffffff",
                 bd=0,
                 relief="flat",
@@ -135,6 +135,20 @@ class Produkt(ABC):
                                                                                                      pady=(0, 2))
             Label(inner, text=beschreibung, wraplength=260, justify="left", **styles.STYLE_BESCHREIBUNG).pack(
                 anchor="w")
+
+            # ➕ Hinweise: vegetarisch / vegan / herkunft
+            hinweis_texts = []
+            if hasattr(produkt, "vegetarisch") and produkt.vegetarisch:
+                hinweis_texts.append(texts["Vegetarisch"])
+            if hasattr(produkt, "vegan") and produkt.vegan:
+                hinweis_texts.append(texts["Vegan"])
+            if hasattr(produkt, "herkunft") and produkt.herkunft:
+                hinweis_texts.append(f"{texts['Herkunft']}: {produkt.herkunft}")
+
+            if hinweis_texts:
+                Label(inner, text=" • ".join(hinweis_texts),
+                      wraplength=260, justify="left", fg="green",
+                      bg="#ffffff", font=("Segoe UI", 9, "italic")).pack(anchor="w", pady=(2, 4))
 
             if isinstance(produkt, Getraenk) and len(varianten) > 1:
                 var = StringVar(value=f"{varianten[0].groesse}l")
